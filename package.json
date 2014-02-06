@@ -1,0 +1,40 @@
+{
+  "name": "observe-plus",
+  "description": "Extra features for Harmony's Object.observe",
+  "version": "0.0.1",
+  "homepage": "http://podefr.github.com/observe-plus/",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://raw.github.com/podefr/observe-plus/master/LICENSE"
+    }
+  ],
+  "files": [
+    "observe-plus.js",
+    "LICENSE"
+  ],
+  "author": "Olivier Scherrer <pode.fr@gmail.com>",
+  "devDependencies": {
+    "chai": "~1.9.0",
+    "sinon": "~1.8.1"
+  },
+  "keywords": [
+    "harmony",
+    "object.observe",
+    "observable",
+    "pojo",
+    "data-binding",
+    "MVC"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:podefr/observe-plus.git"
+  },
+  "bugs": {
+    "url": "https://github.com/podefr/observe-plus/issues"
+  },
+  "main": "observe-plus.js",
+  "engines": {
+    "node": ">= 0.11.10"
+  }
+}
