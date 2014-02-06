@@ -7,4 +7,4 @@
  module.exports = {
  	observeArray: require("./observeArray"),
  	observeObject: require("./observeObject")
- }
+ };

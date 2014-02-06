@@ -5,5 +5,8 @@
 test:
 	mocha specs/*
 
+watch:
+	mocha --watch --harmony specs/*
+
 .PHONY:
 	test
