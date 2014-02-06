@@ -7,12 +7,8 @@ var chai = require("chai");
 var sinon = require("sinon");
 var expect = chai.expect;
 
-describe("GIVEN observe-plus", function () {
+describe("GIVEN observeArray", function () {
 
+	var observeArray = require("../src/observe-plus").observeArray;
 
-	describe("WHEN observing a plain javascript object", function () {
-
-		it("should ", function () {
-		});
-	});
 });
