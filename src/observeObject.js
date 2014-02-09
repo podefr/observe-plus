@@ -56,6 +56,22 @@
             return function dispose() {
                 return removeCallback(_propertyCallbacks, property, callback);
             };
+        },
+
+        observeOnce: function (type, callback) {
+            var dispose = this.observe(type, function () {
+                callback.apply(this, arguments);
+                dispose();
+            });
+            return dispose;
+        },
+
+        observePropertyOnce: function (property, callback) {
+            var dispose = this.observeProperty(property, function () {
+                callback.apply(this, arguments);
+                dispose();
+            });
+            return dispose;
         }
     };
 

@@ -262,7 +262,68 @@ describe("GIVEN an observed object", function () {
 				done();
 			});
 		});
+	});
 
+	describe("WHEN observing only once", function () {
+		var dispose;
+		beforeEach(function () {
+			resetAggregatedEvents();
+			dispose = observer.observeOnce("new", function (ev) {
+				aggregatedEvents.push([ev]);
+			});
+		});
+
+		describe("WHEN the property is added", function () {
+			beforeEach(function () {
+				pojo.newProperty = "value";
+			});
+
+			it("THEN calls the observer", function (done) {
+				asap(function () {
+					var firstEvent = aggregatedEvents[0][0];
+					expect(firstEvent.name).to.equal("newProperty");
+					expect(firstEvent.object["newProperty"]).to.equal("value");
+					done();
+				});
+			});
+
+			it("THEN is disposed of", function () {
+				asap(function () {
+					expect(dispose()).to.be.false;
+				});
+			});
+		});
+	});
+
+	describe("WHEN observing a property only once", function () {
+		var dispose;
+		beforeEach(function () {
+			resetAggregatedEvents();
+			dispose = observer.observePropertyOnce("newProperty", function (ev) {
+				aggregatedEvents.push([ev]);
+			});
+		});
+
+		describe("WHEN the property is added", function () {
+			beforeEach(function () {
+				pojo.newProperty = "value";
+			});
+
+			it("THEN calls the observer", function (done) {
+				asap(function () {
+					var firstEvent = aggregatedEvents[0][0];
+					expect(firstEvent.name).to.equal("newProperty");
+					expect(firstEvent.object["newProperty"]).to.equal("value");
+					done();
+				});
+			});
+
+			it("THEN is disposed of", function () {
+				asap(function () {
+					expect(dispose()).to.be.false;
+				});
+			});
+		});
 	});
 
 	describe("WHEN pausing the updates", function () {
