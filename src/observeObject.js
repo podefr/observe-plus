@@ -7,9 +7,19 @@
  module.exports = function observeObject(observedObject) {
 
     var _typeCallbacks = {},
-        _propertyCallbacks = {};
+        _propertyCallbacks = {},
+        _isPaused = false,
+        _savedEvents = [];
 
     Object.observe(observedObject, function core(events) {
+        if (_isPaused) {
+            _savedEvents = _savedEvents.concat(events);
+        } else {
+            publishEvents(events);
+        }
+     });
+
+    function publishEvents(events) {
         events.forEach(function (ev) {
             function executeCallback(callback) {
                 try {
@@ -26,8 +36,11 @@
                 _propertyCallbacks[ev.name].forEach(executeCallback);
             }
         });
+    }
 
-     });
+    function clearSavedEvents() {
+        _savedEvents = [];
+    }
 
     function storeCallback(array, item, callback) {
         (array[item] = array[item] || []).push(callback);
@@ -72,6 +85,16 @@
                 dispose();
             });
             return dispose;
+        },
+
+        pause: function () {
+            _isPaused = true;
+        },
+
+        resume: function () {
+            _isPaused = false;
+            publishEvents(_savedEvents);
+            clearSavedEvents();
         }
     };
 

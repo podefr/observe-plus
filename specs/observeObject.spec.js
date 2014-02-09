@@ -327,9 +327,60 @@ describe("GIVEN an observed object", function () {
 	});
 
 	describe("WHEN pausing the updates", function () {
+		beforeEach(function () {
+			observer.observeProperty("newProperty", function (ev) {
+				aggregatedEvents.push([ev]);
+			});
+			observer.pause();
+		});
 
-		describe("WHEN resuming publishing the updates", function () {
+		describe("WHEN a property changes", function () {
+			beforeEach(function () {
+				resetAggregatedEvents();
+				pojo.newProperty = "value";
+				pojo.newProperty = "newValue";
+				delete pojo.newProperty;
+			});
 
+			it("THEN the observers aren't called", function () {
+				expect(aggregatedEvents.length).to.equal(0);
+			});
+
+			describe("WHEN resuming publishing the updates", function () {
+				beforeEach(function () {
+					observer.resume();
+				});
+
+				it("THEN calls all the observers in order", function () {
+					asap(function () {
+						var firstEvent = aggregatedEvents[0][0],
+							secondEvent = aggregatedEvents[1][0],
+							thirdEvent = aggregatedEvents[2][0];
+
+						expect(firstEvent.type).to.equal("new");
+						expect(secondEvent.type).to.equal("updated");
+						expect(thirdEvent.type).to.equal("deleted");
+					});
+				});
+
+				describe("WHEN the updates are paused and resumed again", function () {
+					beforeEach(function () {
+						observer.pause();
+						pojo.newProperty = "lastValue";
+						observer.resume();
+					});
+
+					it("THEN only publishes the new event", function () {
+						asap(function () {
+							var lastEvent = aggregatedEvents[0][0];
+
+							expect(lastEvent.type).to.equal("new");
+							expect(lastEvent.name).to.equal("newProperty");
+							expect(lastEvent.object["newProperty"]).to.equal("lastValue");
+						});
+					});
+				});
+			});
 		});
 	});
 });
