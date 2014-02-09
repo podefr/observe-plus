@@ -6,31 +6,55 @@
 
  module.exports = function observeObject(observedObject) {
 
-    var _callbacks = {};
+    var _typeCallbacks = {},
+        _propertyCallbacks = {};
 
     Object.observe(observedObject, function core(events) {
         events.forEach(function (ev) {
-            var callbacks = _callbacks[ev.type] || [];
-            callbacks.forEach(function (callback) {
+            function executeCallback(callback) {
                 try {
-                    callback(ev.name, ev.object[ev.name], ev.oldValue, ev.object);
+                    callback(ev);
                 } catch (err) {
                 }
-            });
+            }
+
+            if (_typeCallbacks[ev.type]) {
+                _typeCallbacks[ev.type].forEach(executeCallback);
+            }
+
+            if (_propertyCallbacks[ev.name]) {
+                _propertyCallbacks[ev.name].forEach(executeCallback);
+            }
         });
+
      });
+
+    function storeCallback(array, item, callback) {
+        (array[item] = array[item] || []).push(callback);
+    }
+
+    function removeCallback(array, item, callback) {
+        var indexOfCB = array[item].indexOf(callback);
+        if (indexOfCB >= 0) {
+            array[item].splice(indexOfCB, 1);
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     return {
         observe: function (type, callback) {
-            (_callbacks[type] = _callbacks[type] || []).push(callback);
+            storeCallback(_typeCallbacks, type, callback);
             return function dispose() {
-                var indexOfCB = _callbacks[type].indexOf(callback);
-                if (indexOfCB >= 0) {
-                    _callbacks[type].splice(indexOfCB, 1);
-                    return true;
-                } else {
-                    return false;
-                }
+                return removeCallback(_typeCallbacks, type, callback);
+            };
+        },
+
+        observeProperty: function (property, callback) {
+            storeCallback(_propertyCallbacks, property, callback);
+            return function dispose() {
+                return removeCallback(_propertyCallbacks, property, callback);
             };
         }
     };

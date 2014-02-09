@@ -13,7 +13,12 @@ var observeObject = require("../src/observe-plus").observeObject;
 describe("GIVEN an observed object", function () {
 
 	var pojo,
-		observer;
+		observer,
+		aggregatedEvents;
+
+	function resetAggregatedEvents() {
+		aggregatedEvents = [];
+	}
 
 	beforeEach(function () {
 		pojo = {};
@@ -22,17 +27,12 @@ describe("GIVEN an observed object", function () {
 
 	describe("WHEN observing newly added properties", function () {
 
-		var aggregatedEvents,
-			dispose;
-
-		function resetAggregatedEvents() {
-			aggregatedEvents = [];
-		}
+		var dispose;
 
 		beforeEach(function () {
 			resetAggregatedEvents();
-			dispose = observer.observe("new", function (addedProperty, propertyValue) {
-				aggregatedEvents.push([addedProperty, propertyValue, "observer1"]);
+			dispose = observer.observe("new", function (ev) {
+				aggregatedEvents.push([ev, "observer1"]);
 			});
 		});
 
@@ -47,9 +47,12 @@ describe("GIVEN an observed object", function () {
 
 			it("THEN should publish a new event", function (done) {
 				asap(function () {
-					expect(aggregatedEvents[0][0]).to.equal("newProperty");
-					expect(aggregatedEvents[0][1]).to.equal("newValue");
-					expect(aggregatedEvents[0][2]).to.equal("observer1");
+					var firstEvent = aggregatedEvents[0][0],
+						observerName = aggregatedEvents[0][1];
+
+					expect(firstEvent.name).to.equal("newProperty");
+					expect(firstEvent.object["newProperty"]).to.equal("newValue");
+					expect(observerName).to.equal("observer1");
 					done();
 				});
 			});
@@ -64,17 +67,19 @@ describe("GIVEN an observed object", function () {
 			describe("WHEN the property is modified", function () {
 				beforeEach(function () {
 					resetAggregatedEvents();
-					observer.observe("updated", function (updatedProperty, propertyNewValue, propertyOldValue) {
-						aggregatedEvents.push([updatedProperty, propertyNewValue, propertyOldValue]);
+					observer.observe("updated", function (ev) {
+						aggregatedEvents.push([ev]);
 					});
 					pojo.newProperty = "updatedValue";
 				});
 
 				it("THEN calls the observer with the new value, the old value, and the name of the property", function (done) {
 					asap(function () {
-						expect(aggregatedEvents[0][0]).to.equal("newProperty");
-						expect(aggregatedEvents[0][1]).to.equal("updatedValue");
-						expect(aggregatedEvents[0][2]).to.equal("newValue");
+						var firstEvent = aggregatedEvents[0][0];
+
+						expect(firstEvent.name).to.equal("newProperty");
+						expect(firstEvent.object["newProperty"]).to.equal("updatedValue");
+						expect(firstEvent.oldValue).to.equal("newValue");
 						done();
 					});
 				});
@@ -83,17 +88,19 @@ describe("GIVEN an observed object", function () {
 			describe("WHEN the property is deleted", function () {
 				beforeEach(function () {
 					resetAggregatedEvents();
-					observer.observe("deleted", function (deletedProperty, propertyNewValue, propertyOldValue) {
-						aggregatedEvents.push([deletedProperty, propertyNewValue, propertyOldValue]);
+					observer.observe("deleted", function (ev) {
+						aggregatedEvents.push([ev]);
 					});
 					delete pojo.newProperty;
 				});
 
 				it("THEN calls the observer with undefined and the old value", function (done) {
 					asap(function () {
-						expect(aggregatedEvents[0][0]).to.equal("newProperty");
-						expect(aggregatedEvents[0][1]).to.be.undefined;
-						expect(aggregatedEvents[0][2]).to.equal("newValue");
+						var firstEvent = aggregatedEvents[0][0];
+
+						expect(firstEvent.name).to.equal("newProperty");
+						expect(firstEvent.object["newProperty"]).to.be.undefined;
+						expect(firstEvent.oldValue).to.equal("newValue");
 						done();
 					});
 				});
@@ -105,8 +112,8 @@ describe("GIVEN an observed object", function () {
 
 			beforeEach(function () {
 				resetAggregatedEvents();
-				dispose2 = observer.observe("new", function (addedProperty, propertyValue) {
-					aggregatedEvents.push([addedProperty, propertyValue, "observer2"]);
+				dispose2 = observer.observe("new", function (ev) {
+					aggregatedEvents.push([ev, "observer2"]);
 				});
 			});
 
@@ -118,21 +125,30 @@ describe("GIVEN an observed object", function () {
 
 				it("THEN calls all the observers in order", function (done) {
 					asap(function () {
-						expect(aggregatedEvents[0][0]).to.equal("newProperty");
-						expect(aggregatedEvents[0][1]).to.equal(pojo.newProperty);
-						expect(aggregatedEvents[0][2]).to.equal("observer1");
+						var firstEvent = aggregatedEvents[0][0],
+							firstObserverName = aggregatedEvents[0][1],
+							secondEvent = aggregatedEvents[1][0],
+							secondObserverName = aggregatedEvents[1][1],
+							thirdEvent = aggregatedEvents[2][0],
+							thirdObserverName = aggregatedEvents[2][1],
+							fourthEvent = aggregatedEvents[3][0],
+							fourthObserverName = aggregatedEvents[3][1];
 
-						expect(aggregatedEvents[1][0]).to.equal("newProperty");
-						expect(aggregatedEvents[1][1]).to.equal(pojo.newProperty);
-						expect(aggregatedEvents[1][2]).to.equal("observer2");
+						expect(firstEvent.name).to.equal("newProperty");
+						expect(firstEvent.object["newProperty"]).to.equal(pojo.newProperty);
+						expect(firstObserverName).to.equal("observer1");
 
-						expect(aggregatedEvents[2][0]).to.equal("anotherNewProperty");
-						expect(aggregatedEvents[2][1]).to.equal(pojo.anotherNewProperty);
-						expect(aggregatedEvents[2][2]).to.equal("observer1");
+						expect(secondEvent.name).to.equal("newProperty");
+						expect(secondEvent.object["newProperty"]).to.equal(pojo.newProperty);
+						expect(secondObserverName).to.equal("observer2");
 
-						expect(aggregatedEvents[3][0]).to.equal("anotherNewProperty");
-						expect(aggregatedEvents[3][1]).to.equal(pojo.anotherNewProperty);
-						expect(aggregatedEvents[3][2]).to.equal("observer2");
+						expect(thirdEvent.name).to.equal("anotherNewProperty");
+						expect(thirdEvent.object["anotherNewProperty"]).to.equal(pojo.anotherNewProperty);
+						expect(thirdObserverName).to.equal("observer1");
+
+						expect(fourthEvent.name).to.equal("anotherNewProperty");
+						expect(fourthEvent.object["anotherNewProperty"]).to.equal(pojo.anotherNewProperty);
+						expect(fourthObserverName).to.equal("observer2");
 						done();
 					});
 				});
@@ -147,8 +163,8 @@ describe("GIVEN an observed object", function () {
 					dispose3 = observer.observe("new", function () {
 						throw new Error("buggy observer");
 					});
-					dispose4 = observer.observe("new", function (addedProperty, propertyValue) {
-						aggregatedEvents.push([addedProperty, propertyValue, "observer4"]);
+					dispose4 = observer.observe("new", function (ev) {
+						aggregatedEvents.push([ev, "observer4"]);
 					});
 				});
 
@@ -159,17 +175,24 @@ describe("GIVEN an observed object", function () {
 
 					it("THEN calls all the observers even when one throws an error", function (done) {
 						asap(function () {
-							expect(aggregatedEvents[0][0]).to.equal("newProperty");
-							expect(aggregatedEvents[0][1]).to.equal(pojo.newProperty);
-							expect(aggregatedEvents[0][2]).to.equal("observer1");
+							var firstEvent = aggregatedEvents[0][0],
+								firstObserverName = aggregatedEvents[0][1],
+								secondEvent = aggregatedEvents[1][0],
+								secondObserverName = aggregatedEvents[1][1],
+								thirdEvent = aggregatedEvents[2][0],
+								thirdObserverName = aggregatedEvents[2][1];
 
-							expect(aggregatedEvents[1][0]).to.equal("newProperty");
-							expect(aggregatedEvents[1][1]).to.equal(pojo.newProperty);
-							expect(aggregatedEvents[1][2]).to.equal("observer2");
+							expect(firstEvent.name).to.equal("newProperty");
+							expect(firstEvent.object["newProperty"]).to.equal(pojo.newProperty);
+							expect(firstObserverName).to.equal("observer1");
 
-							expect(aggregatedEvents[2][0]).to.equal("newProperty");
-							expect(aggregatedEvents[2][1]).to.equal(pojo.newProperty);
-							expect(aggregatedEvents[2][2]).to.equal("observer4");
+							expect(secondEvent.name).to.equal("newProperty");
+							expect(secondEvent.object["newProperty"]).to.equal(pojo.newProperty);
+							expect(secondObserverName).to.equal("observer2");
+
+							expect(thirdEvent.name).to.equal("newProperty");
+							expect(thirdEvent.object["newProperty"]).to.equal(pojo.newProperty);
+							expect(thirdObserverName).to.equal("observer4");
 							done();
 						});
 					});
@@ -191,9 +214,11 @@ describe("GIVEN an observed object", function () {
 
 					it("THEN doesn't call the disposed observer anymore", function (done) {
 						asap(function () {
-							expect(aggregatedEvents[0][0]).to.equal("newProperty");
-							expect(aggregatedEvents[0][1]).to.equal(pojo.newProperty);
-							expect(aggregatedEvents[0][2]).to.equal("observer2");
+							var numberOfCallbacksCalled = aggregatedEvents.length,
+								firstObserverName = aggregatedEvents[0][1];
+
+							expect(numberOfCallbacksCalled).to.equal(1);
+							expect(firstObserverName).to.equal("observer2");
 
 							done();
 						});
@@ -217,5 +242,33 @@ describe("GIVEN an observed object", function () {
 		});
 	});
 
+	describe("WHEN observing specific properties", function () {
+		var dispose;
 
+		beforeEach(function () {
+			resetAggregatedEvents();
+			dispose = observer.observeProperty("newProperty", function (ev) {
+				aggregatedEvents.push([ev]);
+			});
+			pojo.newProperty = "newValue";
+		});
+
+		it("THEN publishes an event with the new value and the old value", function (done) {
+			asap(function () {
+				var firstEvent = aggregatedEvents[0][0];
+				expect(firstEvent.name).to.equal("newProperty");
+				expect(firstEvent.object["newProperty"]).to.equal("newValue");
+				expect(firstEvent.oldValue).to.be.undefined;
+				done();
+			});
+		});
+
+	});
+
+	describe("WHEN pausing the updates", function () {
+
+		describe("WHEN resuming publishing the updates", function () {
+
+		});
+	});
 });
