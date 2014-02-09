@@ -11,7 +11,6 @@
     Object.observe(observedObject, function core(events) {
         events.forEach(function (ev) {
             var callbacks = _callbacks[ev.type] || [];
-
             callbacks.forEach(function (callback) {
                 try {
                     callback(ev.name, ev.object[ev.name], ev.oldValue, ev.object);
