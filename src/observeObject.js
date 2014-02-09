@@ -13,7 +13,10 @@
             var callbacks = _callbacks[ev.type] || [];
 
             callbacks.forEach(function (callback) {
-                callback(ev.name, ev.object[ev.name], ev.oldValue, ev.object);
+                try {
+                    callback(ev.name, ev.object[ev.name], ev.oldValue, ev.object);
+                } catch (err) {
+                }
             });
         });
      });
@@ -21,6 +24,15 @@
     return {
         observe: function (type, callback) {
             (_callbacks[type] = _callbacks[type] || []).push(callback);
+            return function dispose() {
+                var indexOfCB = _callbacks[type].indexOf(callback);
+                if (indexOfCB >= 0) {
+                    _callbacks[type].splice(indexOfCB, 1);
+                    return true;
+                } else {
+                    return false;
+                }
+            };
         }
     };
 
