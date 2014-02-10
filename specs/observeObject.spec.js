@@ -365,6 +365,7 @@ describe("GIVEN an observed object", function () {
 
 				describe("WHEN the updates are paused and resumed again", function () {
 					beforeEach(function () {
+						resetAggregatedEvents();
 						observer.pause();
 						pojo.newProperty = "lastValue";
 						observer.resume();
@@ -372,11 +373,7 @@ describe("GIVEN an observed object", function () {
 
 					it("THEN only publishes the new event", function () {
 						asap(function () {
-							var lastEvent = aggregatedEvents[0][0];
-
-							expect(lastEvent.type).to.equal("new");
-							expect(lastEvent.name).to.equal("newProperty");
-							expect(lastEvent.object["newProperty"]).to.equal("lastValue");
+							expect(aggregatedEvents.length).to.equal(1);
 						});
 					});
 				});
