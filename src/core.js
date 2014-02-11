@@ -10,7 +10,6 @@
 
  	this.setObject = function setObject(object) {
  		_object = object;
- 		console.log(_prototype.observe)
  		_prototype.observe(object, this.treatEvents.bind(this));
  	};
 
