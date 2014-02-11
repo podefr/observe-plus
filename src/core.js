@@ -13,8 +13,16 @@
  		_prototype.observe(object, this.treatEvents.bind(this));
  	};
 
- 	this.treatEvents = function treatEvents() {
+ 	this.treatEvents = function treatEvents(events) {
+ 		events.forEach(function (event) {
 
+ 		});
+ 	};
+
+ 	this.addListener = function addListener(property, name, callback, scope) {
+ 		_callbacks[property] = _callbacks[property] || [];
+
+ 		_callbacks[property].push([callback, scope]);
  	};
 
  };
