@@ -6,7 +6,9 @@
  module.exports = function Core(Prototype) {
 
  	var _prototype = Prototype,
- 		_object = null;
+ 		_object = null,
+ 		_typeCallbacks = {};
+ 		_nameCallbacks = {};
 
  	this.setObject = function setObject(object) {
  		_object = object;
@@ -14,15 +16,33 @@
  	};
 
  	this.treatEvents = function treatEvents(events) {
- 		events.forEach(function (event) {
+ 		 events.forEach(function (ev) {
+            function executeCallback(callbackArray) {
+            	var callback = callbackArray[0],
+            		thisObj = callbackArray[1];
+                try {
+                    callback.call(thisObj, ev);
+                } catch (err) {
+                }
+            }
+            if (_nameCallbacks[ev.name]) {
+                _nameCallbacks[ev.name].forEach(executeCallback);
+            }
 
- 		});
+            if (_typeCallbacks[ev.type]) {
+                _typeCallbacks[ev.type].forEach(executeCallback);
+            }
+        });
  	};
 
- 	this.addListener = function addListener(property, name, callback, scope) {
- 		_callbacks[property] = _callbacks[property] || [];
+ 	this.addNameListener = function addNameListener(name, callback, scope) {
+ 		_nameCallbacks[name] = _nameCallbacks[name] || [];
+ 		_nameCallbacks[name].push([callback, scope]);
+ 	};
 
- 		_callbacks[property].push([callback, scope]);
+ 	this.addTypeListener = function addTypeListener(type, callback, scope) {
+ 		_typeCallbacks[type] = _typeCallbacks[type] || [];
+ 		_typeCallbacks[type].push([callback, scope]);
  	};
 
  };
