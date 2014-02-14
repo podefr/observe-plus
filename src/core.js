@@ -7,8 +7,7 @@
 
  	var _prototype = Prototype,
  		_object = null,
- 		_typeCallbacks = {};
- 		_nameCallbacks = {};
+ 		_callbacks = {};
 
  	this.setObject = function setObject(object) {
  		_object = object;
@@ -25,24 +24,20 @@
                 } catch (err) {
                 }
             }
-            if (_nameCallbacks[ev.name]) {
-                _nameCallbacks[ev.name].forEach(executeCallback);
-            }
 
-            if (_typeCallbacks[ev.type]) {
-                _typeCallbacks[ev.type].forEach(executeCallback);
-            }
+            Object.keys(_callbacks).forEach(function (propertyName) {
+            	if (_callbacks[propertyName] && _callbacks[propertyName][ev[propertyName]]) {
+            		_callbacks[propertyName][ev[propertyName]].forEach(executeCallback);
+            	}
+            });
         });
  	};
 
- 	this.addNameListener = function addNameListener(name, callback, scope) {
- 		_nameCallbacks[name] = _nameCallbacks[name] || [];
- 		_nameCallbacks[name].push([callback, scope]);
- 	};
+ 	this.addListener = function addListener(propertyName, propertyValue, callback, scope) {
+ 		_callbacks[propertyName] = _callbacks[propertyName] || {};
 
- 	this.addTypeListener = function addTypeListener(type, callback, scope) {
- 		_typeCallbacks[type] = _typeCallbacks[type] || [];
- 		_typeCallbacks[type].push([callback, scope]);
+ 		_callbacks[propertyName][propertyValue] = _callbacks[propertyName][propertyValue] || [];
+ 		_callbacks[propertyName][propertyValue].push([callback, scope]);
  	};
 
  };

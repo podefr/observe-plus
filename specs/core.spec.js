@@ -81,7 +81,7 @@ describe("GIVEN core", function () {
 					var thisObj = {};
 					callback = sinon.spy();
 
-					core.addNameListener("property", callback, thisObj);
+					core.addListener("name", "property", callback, thisObj);
 				});
 
 				describe("AND changes happen on the object", function () {
@@ -97,34 +97,6 @@ describe("GIVEN core", function () {
 					it("THEN calls the listeners that matches", function () {
 						expect(callback.called).to.be.true;
 						expect(callback.lastCall.args[0]).to.equal(event1);
-						expect(callback.calledOnce).to.be.true;
-					});
-				});
-			});
-
-			describe("WHEN there's a listener on a specific type", function () {
-				var callback;
-
-				beforeEach(function () {
-					var thisObj = {};
-					callback = sinon.spy();
-
-					core.addTypeListener("update", callback, thisObj);
-				});
-
-				describe("AND changes happen on the object", function () {
-					var event1,
-						event2;
-
-					beforeEach(function () {
-						event1 = createEvent("new", "property", "value");
-						event2 = createEvent("update", "property", "value");
-						core.treatEvents([event1, event2]);
-					});
-
-					it("THEN calls the listeners that matches", function () {
-						expect(callback.called).to.be.true;
-						expect(callback.lastCall.args[0]).to.equal(event2);
 						expect(callback.calledOnce).to.be.true;
 					});
 				});
