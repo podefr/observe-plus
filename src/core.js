@@ -34,10 +34,21 @@
  	};
 
  	this.addListener = function addListener(propertyName, propertyValue, callback, scope) {
+ 		var item = [callback, scope];
  		_callbacks[propertyName] = _callbacks[propertyName] || {};
 
  		_callbacks[propertyName][propertyValue] = _callbacks[propertyName][propertyValue] || [];
- 		_callbacks[propertyName][propertyValue].push([callback, scope]);
+ 		_callbacks[propertyName][propertyValue].push(item);
+
+ 		return function dispose() {
+ 			var index = _callbacks[propertyName][propertyValue].indexOf(item);
+ 			if (index >= 0) {
+ 				_callbacks[propertyName][propertyValue].splice(index, 1);
+ 				return true;
+ 			} else {
+ 				return false;
+ 			}
+ 		};
  	};
 
  };

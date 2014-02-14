@@ -75,13 +75,14 @@ describe("GIVEN core", function () {
 			});
 
 			describe("WHEN there's a listener on a specific property name", function () {
-				var callback;
+				var callback,
+					dispose;
 
 				beforeEach(function () {
 					var thisObj = {};
 					callback = sinon.spy();
 
-					core.addListener("name", "property", callback, thisObj);
+					dispose = core.addListener("name", "property", callback, thisObj);
 				});
 
 				describe("AND changes happen on the object", function () {
@@ -98,6 +99,38 @@ describe("GIVEN core", function () {
 						expect(callback.called).to.be.true;
 						expect(callback.lastCall.args[0]).to.equal(event1);
 						expect(callback.calledOnce).to.be.true;
+					});
+				});
+
+				describe("WHEN disposing of a listener", function () {
+					var isDisposed = false;
+
+					beforeEach(function () {
+						isDisposed = dispose();
+					});
+
+					it("THEN disposes of the listener", function () {
+						expect(isDisposed).to.equal(true);
+					});
+
+					describe("WHEN new changes happen on the object", function () {
+						beforeEach(function () {
+							core.treatEvents([createEvent("add", "property", "value")]);
+						});
+
+						it("THEN doesnt call the listener anymore", function () {
+							expect(callback.called).to.be.false;
+						});
+					});
+
+					describe("WHEN trying to dispose again", function () {
+						beforeEach(function () {
+							isDisposed = dispose();
+						});
+
+						it("THEN doesnt do anything", function () {
+							expect(isDisposed).to.be.false;
+						});
 					});
 				});
 			});
