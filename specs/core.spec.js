@@ -76,10 +76,11 @@ describe("GIVEN core", function () {
 
 			describe("WHEN there's a listener on a specific property name", function () {
 				var callback,
-					dispose;
+					dispose,
+					thisObj;
 
 				beforeEach(function () {
-					var thisObj = {};
+					thisObj = {};
 					callback = sinon.spy();
 
 					dispose = core.addListener("name", "property", callback, thisObj);
@@ -99,6 +100,7 @@ describe("GIVEN core", function () {
 						expect(callback.called).to.be.true;
 						expect(callback.lastCall.args[0]).to.equal(event1);
 						expect(callback.calledOnce).to.be.true;
+						expect(callback.calledOn(thisObj)).to.be.true;
 					});
 				});
 
@@ -135,6 +137,30 @@ describe("GIVEN core", function () {
 				});
 			});
 
+			describe("WHEN observing changes only once", function () {
+				var dispose,
+					callback;
+
+				beforeEach(function () {
+					callback = sinon.spy();
+					dispose = core.addListenerOnce("name", "property", callback);
+				});
+
+				describe("WHEN the property is added", function () {
+					beforeEach(function () {
+						event1 = createEvent("add", "property", "value");
+						core.treatEvents([event1]);
+					});
+
+					it("THEN calls the observer", function () {
+						expect(callback.calledOnce).to.be.true;
+					});
+
+					it("THEN is disposed of", function () {
+						expect(dispose()).to.be.false;
+					});
+				});
+			});
 		});
 	});
 });

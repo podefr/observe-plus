@@ -51,4 +51,12 @@
  		};
  	};
 
+ 	this.addListenerOnce = function addListenerOnce(propertyName, propertyValue, callback, scope) {
+ 		var dispose = this.addListener(propertyName, propertyValue, function () {
+ 			callback.apply(scope, arguments);
+ 			dispose();
+ 		});
+ 		return dispose;
+ 	};
+
  };
