@@ -161,6 +161,61 @@ describe("GIVEN core", function () {
 					});
 				});
 			});
+
+			describe("WHEN pausing the updates", function () {
+				var callback;
+
+				beforeEach(function () {
+					callback = sinon.spy();
+
+					core.addListener("name", "property", callback);
+					core.pause();
+				});
+
+				describe("WHEN a property changes", function () {
+					var event1,
+						event2,
+						event3;
+
+					beforeEach(function () {
+						event1 = createEvent("add", "property", "value");
+						event2 = createEvent("update", "property", "newValue");
+						event3 = createEvent("delete", "property");
+						core.treatEvents([event1, event2, event3]);
+					});
+
+					it("THEN the observers aren't called", function () {
+						expect(callback.called).to.be.false;
+					});
+
+					describe("WHEN resuming publishing the updates", function () {
+						beforeEach(function () {
+							core.resume();
+						});
+
+						it("THEN calls all the observers in order", function () {
+							expect(callback.firstCall.calledWith(event1)).to.be.true;
+							expect(callback.secondCall.calledWith(event2)).to.be.true;
+							expect(callback.thirdCall.calledWith(event3)).to.be.true;
+							expect(callback.callCount).to.equal(3);
+
+						});
+
+						describe("WHEN the updates are paused and resumed again", function () {
+							beforeEach(function () {
+								callback.reset();
+								core.pause();
+								core.treatEvents([createEvent("add", "property", "value")]);
+								core.resume();
+							});
+
+							it("THEN only publishes the new event", function () {
+								expect(callback.callCount).to.equal(1);
+							});
+						});
+					});
+				});
+			});
 		});
 	});
 });

@@ -7,7 +7,9 @@
 
  	var _prototype = Prototype,
  		_object = null,
- 		_callbacks = {};
+ 		_callbacks = {},
+ 		_isPaused = false,
+ 		_savedEvents = [];
 
  	this.setObject = function setObject(object) {
  		_object = object;
@@ -15,7 +17,15 @@
  	};
 
  	this.treatEvents = function treatEvents(events) {
- 		 events.forEach(function (ev) {
+ 		 if (_isPaused) {
+ 		 	_savedEvents = _savedEvents.concat(events);
+ 		 } else {
+ 		 	publishEvents(events);
+ 		 }
+ 	};
+
+ 	function publishEvents(events) {
+		events.forEach(function (ev) {
             function executeCallback(callbackArray) {
             	var callback = callbackArray[0],
             		thisObj = callbackArray[1];
@@ -31,7 +41,7 @@
             	}
             });
         });
- 	};
+ 	}
 
  	this.addListener = function addListener(propertyName, propertyValue, callback, scope) {
  		var item = [callback, scope];
@@ -57,6 +67,16 @@
  			dispose();
  		});
  		return dispose;
+ 	};
+
+ 	this.pause = function pause() {
+ 		_isPaused = true;
+ 	};
+
+ 	this.resume = function resume() {
+ 		_isPaused = false;
+ 		publishEvents(_savedEvents);
+ 		_savedEvents = [];
  	};
 
  };
