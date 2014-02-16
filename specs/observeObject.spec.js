@@ -50,6 +50,7 @@ describe("GIVEN an observed object", function () {
 					var firstEvent = aggregatedEvents[0][0],
 						observerName = aggregatedEvents[0][1];
 
+					expect(firstEvent.type).to.equal("new");
 					expect(firstEvent.name).to.equal("newProperty");
 					expect(firstEvent.object["newProperty"]).to.equal("newValue");
 					expect(observerName).to.equal("observer1");
@@ -73,10 +74,11 @@ describe("GIVEN an observed object", function () {
 					pojo.newProperty = "updatedValue";
 				});
 
-				it("THEN calls the observer with the new value, the old value, and the name of the property", function (done) {
+				it("THEN calls the observer with the updated event", function (done) {
 					asap(function () {
 						var firstEvent = aggregatedEvents[0][0];
 
+						expect(firstEvent.type).to.equal("updated");
 						expect(firstEvent.name).to.equal("newProperty");
 						expect(firstEvent.object["newProperty"]).to.equal("updatedValue");
 						expect(firstEvent.oldValue).to.equal("newValue");
