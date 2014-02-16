@@ -54,36 +54,23 @@ describe("GIVEN core", function () {
 				expect(core.treatEvents.called).to.be.true;
 			});
 
-			describe("WHEN a change happens on the object", function () {
-				var event1,
-					event2,
-					event3;
-
-				beforeEach(function () {
-					event1 = createEvent("add", "property", "value");
-					event2 = createEvent("update", "property", "newValue", "value");
-					event3 = createEvent("delete", "property", undefined, "newValue");
-					callback([event1, event2, event3]);
-				});
-
-				it("THEN calls the callback with core as the this object", function () {
-					expect(core.treatEvents.lastCall.thisValue).to.equal(core);
-					expect(core.treatEvents.lastCall.args[0][0]).to.equal(event1);
-					expect(core.treatEvents.lastCall.args[0][1]).to.equal(event2);
-					expect(core.treatEvents.lastCall.args[0][2]).to.equal(event3);
-				});
-			});
-
 			describe("WHEN there's a listener on a specific property name", function () {
 				var callback,
 					dispose,
-					thisObj;
+					thisObj,
+					order = [];
 
 				beforeEach(function () {
 					thisObj = {};
 					callback = sinon.spy();
 
 					dispose = core.addListener("name", "property", callback, thisObj);
+					core.addListener("name", "property", function () {
+						order.push("observer2");
+					});
+					core.addListener("name", "property", function () {
+						order.push("observer3");
+					});
 				});
 
 				describe("AND changes happen on the object", function () {
@@ -96,11 +83,35 @@ describe("GIVEN core", function () {
 						core.treatEvents([event1, event2]);
 					});
 
-					it("THEN calls the listeners that matches", function () {
+					it("THEN calls the listeners that match", function () {
 						expect(callback.called).to.be.true;
 						expect(callback.lastCall.args[0]).to.equal(event1);
 						expect(callback.calledOnce).to.be.true;
 						expect(callback.calledOn(thisObj)).to.be.true;
+					});
+
+					it("THEN calls the listeners in order", function () {
+						expect(order[0]).to.equal("observer2");
+						expect(order[1]).to.equal("observer3");
+					});
+
+					describe("WHEN a listener throws an error", function () {
+						beforeEach(function () {
+							order = [];
+							core.addListener("name", "property", function () {
+								throw new Error("buggy listener");
+							});
+							core.addListener("name", "property", function () {
+								order.push("observer4");
+							});
+							core.treatEvents([event1]);
+						});
+
+						it("THEN ignores the listener and continues to the next one", function () {
+							expect(order[0]).to.equal("observer2");
+							expect(order[1]).to.equal("observer3");
+							expect(order[2]).to.equal("observer4");
+						});
 					});
 				});
 

@@ -6,9 +6,23 @@
 var chai = require("chai");
 var sinon = require("sinon");
 var expect = chai.expect;
+var asap = require("asap");
 
-describe("GIVEN observeArray", function () {
+var observeArray = require("../src/observe-plus").observeArray;
 
-	var observeArray = require("../src/observe-plus").observeArray;
+describe("GIVEN an observed array", function () {
+
+	var array,
+		observer,
+		aggregatedEvents;
+
+	function resetAggregatedEvents() {
+		aggregatedEvents = [];
+	}
+
+	beforeEach(function () {
+		array = [];
+		observer = observeObject(array);
+	});
 
 });
