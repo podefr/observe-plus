@@ -102,4 +102,25 @@ describe("GIVEN an observed array", function () {
 			});
 		});
 	});
+
+	describe("WHEN observing specific indexes", function () {
+		beforeEach(function () {
+			resetAggregatedEvents();
+			observer.observeIndex(0, function (ev) {
+				aggregatedEvents.push([ev]);
+			});
+			array.push("value");
+			array[0] = "newValue";
+		});
+
+		it("THEN publishes an event with the new value and the old value", function (done) {
+			asap(function () {
+				var firstEvent = aggregatedEvents[0][0];
+				expect(firstEvent.name).to.equal("0");
+				expect(firstEvent.object[0]).to.equal("newValue");
+				expect(firstEvent.oldValue).to.equal("value");
+				done();
+			});
+		});
+	});
 });
