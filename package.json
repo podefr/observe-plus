@@ -1,7 +1,7 @@
 {
   "name": "observe-plus",
-  "description": "Extra features for Harmony's Object.observe",
-  "version": "0.0.1",
+  "description": "Extra features for ES7's Object.observe",
+  "version": "1.0.0-beta",
   "homepage": "http://podefr.github.com/observe-plus/",
   "licenses": [
     {
@@ -13,19 +13,19 @@
     "observe-plus.js",
     "LICENSE"
   ],
+  "dependencies": {
+    "asap": "~1.0.0"
+  },
   "author": "Olivier Scherrer <pode.fr@gmail.com>",
   "devDependencies": {
     "chai": "~1.9.0",
-    "sinon": "~1.8.1",
-    "asap": "~1.0.0"
+    "sinon": "~1.8.1"
   },
   "keywords": [
-    "harmony",
-    "object.observe",
-    "observable",
-    "pojo",
-    "data-binding",
-    "MVC"
+    "ES7",
+    "Object.observe",
+    "Array.observe",
+    "observe"
   ],
   "repository": {
     "type": "git",
