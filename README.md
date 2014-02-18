@@ -62,16 +62,20 @@ observer.observe("update", function (publishedEvent) { ... }, scope /* optional 
 // This listener will be called only once and then disposed
 observer.observeOnce("update", function (publishedEvent) { ... }, scope /* optional */);
 
+// This will trigger the listeners that have subscribed to "update"
 plainObject.newProperty = "newValue";
 
+// This listener will be called when a property is deleted from the object
 observer.observe("delete", function (publishedEvent) { ... }, scope /* optional */);
 
-// The listener will be called only once and then disposed
+// This listener will be called only once and then disposed
 observer.observeOnce("delete", function (publishedEvent) { ... }, scope /* optional */);
 
+// This will trigger the listeners that have subscribed to "delete"
 delete plainObject.newProperty;
 
-// When you're done with the listener, you can remove it by calling dispose:
+// When you're done with the listener, you can remove it by calling dispose. All the observe methods
+// return a dispose function.
 dispose();
 ```
 
@@ -86,6 +90,9 @@ var dispose = observer.observe("newProperty", function (publishedEvent) {
 	publishedEvent.object === plainObject;
 	publishedEvent.type === "new";
 }, scope /* optional */);
+
+// Or similar, but the listener will be called only once:
+observer.observeOnce("newProperty", function () { ...}, scope /* optional */);
 
 // This will call the callback with the new event
 plainObject.newProperty = "value";
