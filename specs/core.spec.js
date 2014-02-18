@@ -157,6 +157,19 @@ describe("GIVEN core", function () {
 					dispose = core.addListenerOnce("name", "property", callback);
 				});
 
+				describe("WHEN the observer is disposed of", function () {
+					var isDisposed;
+
+					beforeEach(function () {
+						isDisposed = dispose();
+						core.treatEvents([createEvent("add", "property", "value")]);
+					});
+
+					it("THEN the observer is never called", function () {
+						expect(callback.called).to.be.false;
+					});
+				});
+
 				describe("WHEN the property is added", function () {
 					beforeEach(function () {
 						event1 = createEvent("add", "property", "value");

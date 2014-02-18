@@ -24,7 +24,7 @@
         	return _core.addListener("type", type, callback, scope);
         },
 
-        observeOnce: function (callback, scope) {
+        observeOnce: function (type, callback, scope) {
 			return _core.addListenerOnce("type", type, callback, scope);
         },
 
