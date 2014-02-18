@@ -118,10 +118,14 @@ var observer = observePlus.observeArray(plainArray);
 
 ```js
 // Listening to changes on the array such as item added or removed
-observer.observe("splice", function (publishedEvent) {
+var dispose = observer.observe("splice", function (publishedEvent) {
 	//
 }, scope /* optional */);
 
+// Listening to splice events only once:
+observer.observeOnce(...)
+
+// This will trigger all the listeners that have subscribed to splice
 plainArray.push("item");
 
 // Listening to updates on the items
@@ -129,16 +133,34 @@ observer.observe("update", function (publishedEvent) {
 	//
 }, scope /* optional */);
 
+// This will trigger all the listeners that have subscribed to updates
+plainArray[0] = "newValue";
+
+// This will again trigger all the listeners that have subscribed to splice
 plainArray.pop();
 
-observer.observeIndex(10, function (publishedEvent) {
+// When you don't need the observer anymore, you can dispose it
+dispose();
+```
+
+You can also listen to a specific index directly:
+
+```js
+var dispose = observer.observeIndex(10, function (publishedEvent) {
 	//
 }, scope /* optional */);
 
-plainArray[10] = "item":
+// Or to listen index 10 only once:
+observer.observerIndexOnce(...);
+
+// This will trigger all the listeners that have subscribed to changes on item 10:
+plainArray[10] = "item";
+
+// Removing the listener
+dispose();
 ```
 
-Trick: if you use Object.observe on the array, you can also listen to length changes:
+Trick: if you use Object.observe on the array, you can also listen to 'length' changes:
 
 ```js
 var observer = observePlus.observeObject(plainArray);
