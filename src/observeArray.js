@@ -17,7 +17,7 @@
         },
 
         observeIndexOnce: function (index, callback, scope) {
-            return _core.addListener("name", index, callback, scope);
+            return _core.addListenerOnce("name", index, callback, scope);
         },
 
         observe: function (type, callback, scope) {

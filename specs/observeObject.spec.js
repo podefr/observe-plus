@@ -36,8 +36,11 @@ describe("GIVEN an observed object", function () {
 			});
 		});
 
-		it("THEN shouldn't publish any event before a new property is added", function () {
-			expect(aggregatedEvents.length).to.equal(0);
+		it("THEN shouldn't publish any event before a new property is added", function (done) {
+			asap(function () {
+				expect(aggregatedEvents.length).to.equal(0);
+				done();
+			});
 		});
 
 		describe("WHEN a new property is added", function () {
@@ -153,8 +156,9 @@ describe("GIVEN an observed object", function () {
 							isDisposedOf = dispose();
 						});
 
-						it("THEN tells that it can't be disposed of anymore", function () {
+						it("THEN tells that it can't be disposed of anymore", function (done) {
 							expect(isDisposedOf).to.be.false;
+							done();
 						});
 					});
 				});
@@ -207,9 +211,10 @@ describe("GIVEN an observed object", function () {
 				});
 			});
 
-			it("THEN is disposed of", function () {
+			it("THEN is disposed of", function (done) {
 				asap(function () {
 					expect(dispose()).to.be.false;
+					done();
 				});
 			});
 		});
@@ -222,26 +227,22 @@ describe("GIVEN an observed object", function () {
 			dispose = observer.observePropertyOnce("newProperty", function (ev) {
 				aggregatedEvents.push([ev]);
 			});
+			pojo.newProperty = "value";
 		});
 
-		describe("WHEN the property is added", function () {
-			beforeEach(function () {
-				pojo.newProperty = "value";
+		it("THEN calls the observer", function (done) {
+			asap(function () {
+				var firstEvent = aggregatedEvents[0][0];
+				expect(firstEvent.name).to.equal("newProperty");
+				expect(firstEvent.object["newProperty"]).to.equal("value");
+				done();
 			});
+		});
 
-			it("THEN calls the observer", function (done) {
-				asap(function () {
-					var firstEvent = aggregatedEvents[0][0];
-					expect(firstEvent.name).to.equal("newProperty");
-					expect(firstEvent.object["newProperty"]).to.equal("value");
-					done();
-				});
-			});
-
-			it("THEN is disposed of", function () {
-				asap(function () {
-					expect(dispose()).to.be.false;
-				});
+		it("THEN is disposed of", function (done) {
+			asap(function () {
+				expect(dispose()).to.be.false;
+				done();
 			});
 		});
 	});
@@ -262,8 +263,11 @@ describe("GIVEN an observed object", function () {
 				delete pojo.newProperty;
 			});
 
-			it("THEN the observers aren't called", function () {
-				expect(aggregatedEvents.length).to.equal(0);
+			it("THEN the observers aren't called", function (done) {
+				asap(function () {
+					expect(aggregatedEvents.length).to.equal(0);
+					done();
+				});
 			});
 
 			describe("WHEN resuming publishing the updates", function () {
@@ -271,7 +275,7 @@ describe("GIVEN an observed object", function () {
 					observer.resume();
 				});
 
-				it("THEN calls all the observers in order", function () {
+				it("THEN calls all the observers in order", function (done) {
 					asap(function () {
 						var firstEvent = aggregatedEvents[0][0],
 							secondEvent = aggregatedEvents[1][0],
@@ -280,6 +284,7 @@ describe("GIVEN an observed object", function () {
 						expect(firstEvent.type).to.equal("new");
 						expect(secondEvent.type).to.equal("updated");
 						expect(thirdEvent.type).to.equal("deleted");
+						done();
 					});
 				});
 
@@ -291,9 +296,10 @@ describe("GIVEN an observed object", function () {
 						observer.resume();
 					});
 
-					it("THEN only publishes the new event", function () {
+					it("THEN only publishes the new event", function (done) {
 						asap(function () {
 							expect(aggregatedEvents.length).to.equal(1);
+							done();
 						});
 					});
 				});

@@ -3,6 +3,8 @@
  * Copyright(c) 2014 Olivier Scherrer <pode.fr@gmail.com>
  * MIT Licensed
  */
+ var asap = require("asap");
+
  module.exports = function Core(Prototype) {
 
  	var _prototype = Prototype,
@@ -74,9 +76,11 @@
  	};
 
  	this.resume = function resume() {
- 		_isPaused = false;
- 		publishEvents(_savedEvents);
- 		_savedEvents = [];
+ 		asap(function () {
+	 		_isPaused = false;
+	 		publishEvents(_savedEvents);
+	 		_savedEvents = [];
+ 		});
  	};
 
  };

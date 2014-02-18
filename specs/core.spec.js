@@ -6,6 +6,7 @@
 var chai = require("chai");
 var sinon = require("sinon");
 var expect = chai.expect;
+var asap = require("asap");
 
 var Core = require("../src/core");
 
@@ -217,12 +218,18 @@ describe("GIVEN core", function () {
 							core.resume();
 						});
 
-						it("THEN calls all the observers in order", function () {
-							expect(callback.firstCall.calledWith(event1)).to.be.true;
-							expect(callback.secondCall.calledWith(event2)).to.be.true;
-							expect(callback.thirdCall.calledWith(event3)).to.be.true;
-							expect(callback.callCount).to.equal(3);
+						it("THEN doesnt call the callbacks synchronously", function () {
+							expect(callback.called).to.be.false;
+						});
 
+						it("THEN calls all the observers in order at the next turn of the event loop", function (done) {
+							asap(function () {
+								expect(callback.firstCall.calledWith(event1)).to.be.true;
+								expect(callback.secondCall.calledWith(event2)).to.be.true;
+								expect(callback.thirdCall.calledWith(event3)).to.be.true;
+								expect(callback.callCount).to.equal(3);
+								done();
+							});
 						});
 
 						describe("WHEN the updates are paused and resumed again", function () {
@@ -233,8 +240,11 @@ describe("GIVEN core", function () {
 								core.resume();
 							});
 
-							it("THEN only publishes the new event", function () {
-								expect(callback.callCount).to.equal(1);
+							it("THEN only publishes the new event", function (done) {
+								asap(function () {
+									expect(callback.callCount).to.equal(1);
+									done();
+								});
 							});
 						});
 					});
