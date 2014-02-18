@@ -10,7 +10,7 @@
     }
   ],
   "files": [
-    "observe-plus.js",
+    "src",
     "LICENSE"
   ],
   "dependencies": {
@@ -34,7 +34,7 @@
   "bugs": {
     "url": "https://github.com/podefr/observe-plus/issues"
   },
-  "main": "observe-plus.js",
+  "main": "src/observe-plus.js",
   "engines": {
     "node": ">= 0.11.10"
   }
