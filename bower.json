@@ -1,0 +1,19 @@
+{
+  "name": "observe-plus",
+  "version": "1.0.0-beta",
+  "main": "observe-plus.js",
+  "keywords": [
+    "ES7",
+    "Object.observe",
+    "Array.observe",
+    "observe"
+  ],
+  "ignore": [
+  	"node_modules",
+  	"specs",
+  	"src",
+  	".gitignore",
+  	"Makefile",
+  	"package.json"
+  ]
+}
