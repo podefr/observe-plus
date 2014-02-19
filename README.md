@@ -28,6 +28,13 @@ var observePlus = require("observe-plus");
 
 ### Observing objects:
 
+Object.observe() allows to add a listener to changes happening on an object. Usually, we are interested in two types of events:
+
+- When a property is added to/updated or removed from the object.
+- When a specific property changes
+
+observePlus.observeObject allows to listen to these two types.
+
 ```js
 var plainObject = {};
 
@@ -39,7 +46,7 @@ Observing generic events on the object such as property added, updated, removed:
 ```js
 // Listening to properties being added to the object
 var dispose = observer.observe("new", function (publishedEvent) {
-	// When a property will be added to the object,
+	// When a property is be added to the object,
 	// this callback will be called with this === scope
 	// and publishedEvent as the original event such as, for example:
 	publishedEvent.name == "newProperty";
@@ -53,7 +60,7 @@ plainObject.newProperty = "value";
 // This will add a listener to properties being updated
 observer.observe("update", function (publishedEvent) { ... }, scope /* optional */);
 
-// This listener will be called only once and then disposed
+// This listener will be called only once and then disposed of
 observer.observeOnce("update", function (publishedEvent) { ... }, scope /* optional */);
 
 // This will trigger the listeners that have subscribed to "update"
@@ -62,20 +69,21 @@ plainObject.newProperty = "newValue";
 // This listener will be called when a property is deleted from the object
 observer.observe("delete", function (publishedEvent) { ... }, scope /* optional */);
 
-// This listener will be called only once and then disposed
+// This listener will be called only once and then disposed of
 observer.observeOnce("delete", function (publishedEvent) { ... }, scope /* optional */);
 
 // This will trigger the listeners that have subscribed to "delete"
 delete plainObject.newProperty;
 
-// When you're done with the listener, you can remove it by calling dispose. All the observe methods
-// return a dispose function.
+// When you're done with a listener, you can remove it by calling the dispose function that is the observe() method returned.
+// All the observe methods return a dispose function.
 dispose();
 ```
 
-Observing events on specific properties of the object:
+Observing changes on specific properties of the object:
 
 ```js
+// Listening to changes on the "newProperty" property
 var dispose = observer.observe("newProperty", function (publishedEvent) {
 	// When newProperty will be added/modified or removed,
 	// this callback will be called with this === scope
@@ -86,22 +94,31 @@ var dispose = observer.observe("newProperty", function (publishedEvent) {
 }, scope /* optional */);
 
 // Or similar, but the listener will be called only once:
-observer.observeOnce("newProperty", function () { ...}, scope /* optional */);
+observer.observeOnce("newProperty", function (publishedEvent) { ...}, scope /* optional */);
 
-// This will call the callback with the new event
+// This will call the callback with the "new" event
 plainObject.newProperty = "value";
 
-// This will call the callback with the update event
+// This will call the callback with the "update" event
 plainObject.newProperty = "newValue";
 
-// This will call the callback with the delete event
+// This will call the callback with the "delete" event
 delete plainObject.newProperty;
 
 // This will not call the callback as it's not listening to events on anotherProperty
 plainObject.anotherProperty = "value";
+
+// When you're done with a listener, you can remove it by calling the dispose function that is the observe() method returned.
+// All the observe methods return a dispose function.
+dispose();
 ```
 
 ### Observing arrays:
+
+As for arrays, we may be interested in:
+
+- Listening to changes on the array such as item added/removed (splice) or updated (update)
+- Listening to changes on a specific index of the array
 
 ```js
 var plainArray = [];
@@ -116,9 +133,9 @@ var dispose = observer.observe("splice", function (publishedEvent) {
 }, scope /* optional */);
 
 // Listening to splice events only once:
-observer.observeOnce(...)
+observer.observeOnce("splice", function (publishedEvent) { ... }, scope /* optional */);
 
-// This will trigger all the listeners that have subscribed to splice
+// This will trigger all the listeners that have subscribed to "splice"
 plainArray.push("item");
 
 // Listening to updates on the items
@@ -126,17 +143,18 @@ observer.observe("update", function (publishedEvent) {
 	//
 }, scope /* optional */);
 
-// This will trigger all the listeners that have subscribed to updates
+// This will trigger all the listeners that have subscribed to "update"
 plainArray[0] = "newValue";
 
-// This will again trigger all the listeners that have subscribed to splice
+// This will again trigger all the listeners that have subscribed to "splice"
 plainArray.pop();
 
-// When you don't need the observer anymore, you can dispose it
+// When you're done with a listener, you can remove it by calling the dispose function that is the observe() method returned.
+// All the observe methods return a dispose function.
 dispose();
 ```
 
-You can also listen to a specific index directly:
+You can also listen to a indexes directly:
 
 ```js
 var dispose = observer.observeIndex(10, function (publishedEvent) {
@@ -144,7 +162,7 @@ var dispose = observer.observeIndex(10, function (publishedEvent) {
 }, scope /* optional */);
 
 // Or to listen index 10 only once:
-observer.observerIndexOnce(...);
+observer.observerIndexOnce(10, function (publishedEvent) { ... }, scope /* optional */);
 
 // This will trigger all the listeners that have subscribed to changes on item 10:
 plainArray[10] = "item";
@@ -153,7 +171,7 @@ plainArray[10] = "item";
 dispose();
 ```
 
-Trick: if you use Object.observe on the array, you can also listen to 'length' changes:
+Trick: if you use Object.observe on the array, you can also listen to "length" changes as it's a property of the object
 
 ```js
 var observer = observePlus.observeObject(plainArray);
