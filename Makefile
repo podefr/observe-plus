@@ -20,5 +20,4 @@ test:
 watch:
 	mocha --watch --harmony specs/*
 
-.PHONY:
-	test watch
+.PHONY: test watch clean
