@@ -1,5 +1,4 @@
-Observe+
-===========
+# Observe+
 
 Observe+ is a library based on [Object.observe](http://wiki.ecmascript.org/doku.php?id=harmony:observe) that adds the following features:
 
@@ -7,32 +6,27 @@ Observe+ is a library based on [Object.observe](http://wiki.ecmascript.org/doku.
 - pause/resume to do bach updates on the model before publishing all the events
 - observe once to remove the event listener after an event has fired.
 
-What is Object.observe?
-========================
+## What is Object.observe?
 
 http://addyosmani.com/blog/the-future-of-data-binding-is-object-observe/
 
-Compatible browsers:
-====================
+### Compatible browsers:
 
 Check Kangax' ES compat table to see where Object.observe (ES7) is available : http://kangax.github.io/es5-compat-table/es6/#Object.observe_%28part_of_b_ES7_/b_%29
 
-Installation:
-=============
+## Installation:
 
 ```bash
 npm install observe-plus
 ```
 
-Usage:
-=====
+## API
 
 ```js
 var observePlus = require("observe-plus");
 ```
 
-Observing objects:
-------------------
+### Observing objects:
 
 ```js
 var plainObject = {};
@@ -107,8 +101,7 @@ delete plainObject.newProperty;
 plainObject.anotherProperty = "value";
 ```
 
-Observing arrays:
------------------
+### Observing arrays:
 
 ```js
 var plainArray = [];
@@ -170,8 +163,7 @@ observer.observe("length", function (publishedEvent) {
 }, scope /* optional */);
 ```
 
-Pause/resume:
--------------
+### Pause/resume:
 
 The events are fired asynchronously, on the next turn of the event loop. This should allow for rendering to be delayed until all computation is done. If you still want to delay the trigger further, you can pause the observer and resume it later, by using the pause/resume API:
 
@@ -187,7 +179,6 @@ observer.resume();
 
 Note that resume() will also trigger the callbacks asynchronously, to be consistent with Object.observe and Array.observe.
 
-License:
-========
+## License:
 
 MIT
