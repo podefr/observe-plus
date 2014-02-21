@@ -20,4 +20,7 @@ test:
 watch:
 	mocha --watch --harmony specs/*
 
-.PHONY: test watch clean
+jshint:
+	jshint src
+
+.PHONY: test watch clean jshint

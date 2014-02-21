@@ -3,11 +3,10 @@
  * Copyright(c) 2014 Olivier Scherrer <pode.fr@gmail.com>
  * MIT Licensed
  */
-"use strict";
-
 var asap = require("asap");
 
 module.exports = function Core(Prototype) {
+    "use strict";
 
     var _prototype = Prototype,
         _object = null,
@@ -21,11 +20,11 @@ module.exports = function Core(Prototype) {
     };
 
     this.treatEvents = function treatEvents(events) {
-         if (_isPaused) {
+        if (_isPaused) {
             _savedEvents = _savedEvents.concat(events);
-         } else {
+        } else {
             publishEvents(events);
-         }
+        }
     };
 
     function publishEvents(events) {

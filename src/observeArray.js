@@ -3,11 +3,11 @@
  * Copyright(c) 2014 Olivier Scherrer <pode.fr@gmail.com>
  * MIT Licensed
  */
- "use strict";
+"use strict";
 
- var Core = require("./core");
+var Core = require("./core");
 
- module.exports = function observeArray(observedArray) {
+module.exports = function observeArray(observedArray) {
 
     var _core = new Core(Array);
 
@@ -35,4 +35,4 @@
         resume: _core.resume
     };
 
- };
+};

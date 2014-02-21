@@ -3,9 +3,9 @@
  * Copyright(c) 2014 Olivier Scherrer <pode.fr@gmail.com>
  * MIT Licensed
  */
- "use strict";
+"use strict";
 
- module.exports = {
-    observeArray: require("./observeArray"),
-    observeObject: require("./observeObject")
- };
+module.exports = {
+	observeArray: require("./observeArray"),
+	observeObject: require("./observeObject")
+};
