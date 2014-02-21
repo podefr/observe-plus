@@ -21,11 +21,11 @@
         },
 
         observe: function (type, callback, scope) {
-        	return _core.addListener("type", type, callback, scope);
+            return _core.addListener("type", type, callback, scope);
         },
 
         observeOnce: function (type, callback, scope) {
-			return _core.addListenerOnce("type", type, callback, scope);
+            return _core.addListenerOnce("type", type, callback, scope);
         },
 
         pause: _core.pause,
