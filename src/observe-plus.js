@@ -3,6 +3,7 @@
  * Copyright(c) 2014 Olivier Scherrer <pode.fr@gmail.com>
  * MIT Licensed
  */
+ "use strict";
 
  module.exports = {
     observeArray: require("./observeArray"),

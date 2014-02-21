@@ -3,6 +3,8 @@
  * Copyright(c) 2014 Olivier Scherrer <pode.fr@gmail.com>
  * MIT Licensed
  */
+"use strict";
+
 var chai = require("chai");
 var sinon = require("sinon");
 var expect = chai.expect;
@@ -151,9 +153,11 @@ describe("GIVEN core", function () {
 
             describe("WHEN observing changes only once", function () {
                 var dispose,
-                    callback;
+                    callback,
+                    event1;
 
                 beforeEach(function () {
+                    event1 = createEvent("add", "property", "value");
                     callback = sinon.spy();
                     dispose = core.addListenerOnce("name", "property", callback);
                 });
@@ -163,7 +167,7 @@ describe("GIVEN core", function () {
 
                     beforeEach(function () {
                         isDisposed = dispose();
-                        core.treatEvents([createEvent("add", "property", "value")]);
+                        core.treatEvents([event1]);
                     });
 
                     it("THEN the observer is never called", function () {
@@ -173,7 +177,6 @@ describe("GIVEN core", function () {
 
                 describe("WHEN the property is added", function () {
                     beforeEach(function () {
-                        event1 = createEvent("add", "property", "value");
                         core.treatEvents([event1]);
                     });
 

@@ -3,9 +3,11 @@
  * Copyright(c) 2014 Olivier Scherrer <pode.fr@gmail.com>
  * MIT Licensed
  */
- var asap = require("asap");
+"use strict";
 
- module.exports = function Core(Prototype) {
+var asap = require("asap");
+
+module.exports = function Core(Prototype) {
 
     var _prototype = Prototype,
         _object = null,
@@ -83,4 +85,4 @@
         });
     };
 
- };
+};
