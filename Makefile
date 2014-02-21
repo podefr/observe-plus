@@ -15,7 +15,7 @@ observe-plus.min.js:
 	uglifyjs observe-plus.js >> observe-plus.min.js
 
 test:
-	mocha specs/*
+	mocha --harmony specs/*
 
 watch:
 	mocha --watch --harmony specs/*
