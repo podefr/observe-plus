@@ -70,6 +70,22 @@ describe("GIVEN an observed array", function () {
                 });
             });
 
+            describe("WHEN unobserving", function () {
+                beforeEach(function () {
+                    resetAggregatedEvents();
+                    observer.unobserve();
+
+                    array.push("value");
+                });
+
+                it("THEN doesn't publish events anymore", function (done) {
+                    asap(function () {
+                        expect(aggregatedEvents.length).to.equal(0);
+                        done();
+                    });
+                });
+            });
+
             describe("WHEN the item is modified", function () {
                 beforeEach(function () {
                     resetAggregatedEvents();

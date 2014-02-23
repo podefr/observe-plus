@@ -41,20 +41,13 @@ describe("GIVEN core", function () {
 
             beforeEach(function () {
                 observedObject = {};
-                sinon.spy(core, "treatEvents");
                 core.setObject(observedObject);
-                callback = Prototype.observe.args[0][1];
-                callback([]);
-            });
-
-            afterEach(function () {
-                core.treatEvents.restore();
             });
 
             it("THEN observes changes on the observed object", function () {
                 expect(Prototype.observe.called).to.be.true;
                 expect(Prototype.observe.args[0][0]).to.equal(observedObject);
-                expect(core.treatEvents.called).to.be.true;
+                expect(Prototype.observe.args[0][1]).to.equal(core.treatEvents);
             });
 
             describe("WHEN there's a listener on a specific property name", function () {
@@ -221,7 +214,7 @@ describe("GIVEN core", function () {
                             core.resume();
                         });
 
-                        it("THEN doesnt call the callbacks synchronously", function () {
+                        it("THEN doesn't call the callbacks synchronously", function () {
                             expect(callback.called).to.be.false;
                         });
 
@@ -251,6 +244,19 @@ describe("GIVEN core", function () {
                             });
                         });
                     });
+                });
+            });
+
+            describe("WHEN unobserving the object", function () {
+                beforeEach(function () {
+                    Prototype.unobserve = sinon.spy();
+                    core.unsetObject(observedObject);
+                });
+
+                it("THEN removes the listener from the prototype's (Object/Array) observer", function () {
+                    expect(Prototype.unobserve.called).to.be.true;
+                    expect(Prototype.unobserve.args[0][0]).to.equal(observedObject);
+                    expect(Prototype.unobserve.args[0][1]).to.equal(core.treatEvents);
                 });
             });
         });

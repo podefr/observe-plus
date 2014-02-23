@@ -70,6 +70,23 @@ describe("GIVEN an observed object", function () {
                 });
             });
 
+
+            describe("WHEN unobserving", function () {
+                beforeEach(function () {
+                    resetAggregatedEvents();
+                    observer.unobserve();
+
+                    pojo.anoterProperty = "value";
+                });
+
+                it("THEN doesn't publish events anymore", function (done) {
+                    asap(function () {
+                        expect(aggregatedEvents.length).to.equal(0);
+                        done();
+                    });
+                });
+            });
+
             describe("WHEN the property is modified", function () {
                 beforeEach(function () {
                     resetAggregatedEvents();

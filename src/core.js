@@ -3,11 +3,11 @@
  * Copyright(c) 2014 Olivier Scherrer <pode.fr@gmail.com>
  * MIT Licensed
  */
+"use strict";
+
 var asap = require("asap");
 
 module.exports = function Core(Prototype) {
-    "use strict";
-
     var _prototype = Prototype,
         _object = null,
         _callbacks = {},
@@ -16,7 +16,11 @@ module.exports = function Core(Prototype) {
 
     this.setObject = function setObject(object) {
         _object = object;
-        _prototype.observe(object, this.treatEvents.bind(this));
+        _prototype.observe(object, this.treatEvents);
+    };
+
+    this.unsetObject = function unsetObject() {
+        _prototype.unobserve(_object, this.treatEvents);
     };
 
     this.treatEvents = function treatEvents(events) {
@@ -39,8 +43,11 @@ module.exports = function Core(Prototype) {
             }
 
             Object.keys(_callbacks).forEach(function (propertyName) {
-                if (_callbacks[propertyName] && _callbacks[propertyName][ev[propertyName]]) {
-                    _callbacks[propertyName][ev[propertyName]].forEach(executeCallback);
+                var callbacksForProperty = _callbacks[propertyName],
+                    eventPropertyName = ev[propertyName];
+
+                if (callbacksForProperty && callbacksForProperty[eventPropertyName]) {
+                    callbacksForProperty[eventPropertyName].forEach(executeCallback);
                 }
             });
         });

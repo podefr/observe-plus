@@ -30,6 +30,8 @@ module.exports = function observeArray(observedArray) {
             return _core.addListenerOnce("type", type, callback, scope);
         },
 
+        unobserve: _core.unsetObject.bind(_core),
+
         pause: _core.pause,
 
         resume: _core.resume
