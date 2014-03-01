@@ -1,6 +1,6 @@
 # Observe+
 
-Observe+ is a library based on [Object.observe](http://wiki.ecmascript.org/doku.php?id=harmony:observe) that adds the following features:
+Observe+ is a library based on [Object.observe/Array.observe](http://wiki.ecmascript.org/doku.php?id=harmony:observe) that adds the following features:
 
 - fine grained observe on individual properties/index/event types
 - pause/resume to do bach updates on the model before publishing all the events
@@ -16,8 +16,22 @@ Check Kangax' ES compat table to see where Object.observe (ES7) is available : h
 
 ## Installation:
 
+In node.js or if you use browserify (else, you should!)
+
 ```bash
 npm install observe-plus
+```
+
+In the browser:
+
+```bash
+bower install observe-plus
+```
+
+```html
+	<script src="bower_components/observe-plus/observe-plus.js"></script>
+	<!-- or, for the minified version -->
+	<script src="bower_components/observe-plus/observe-plus.min.js"></script>
 ```
 
 ## API
