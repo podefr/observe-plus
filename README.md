@@ -2,9 +2,10 @@
 
 Observe+ is a library based on [Object.observe/Array.observe](http://wiki.ecmascript.org/doku.php?id=harmony:observe) that adds the following features:
 
-- fine grained observe on individual properties/index/event types
+- fine-grained observe on individual properties/index/event types
 - pause/resume to do bach updates on the model before publishing all the events
-- observe once to remove the event listener after an event has fired.
+- observe once to remove the event listener after an event has fired
+- disposable pattern for removing listeners
 
 ## What is Object.observe?
 
@@ -127,6 +128,12 @@ plainObject.anotherProperty = "value";
 dispose();
 ```
 
+Stop observing changes:
+
+```js
+observer.unobserve();
+```
+
 ### Observing arrays:
 
 As for arrays, we may be interested in:
@@ -193,6 +200,12 @@ var observer = observePlus.observeObject(plainArray);
 observer.observe("length", function (publishedEvent) {
 
 }, scope /* optional */);
+```
+
+Stop observing changes:
+
+```js
+observer.unobserve();
 ```
 
 ### Pause/resume:
