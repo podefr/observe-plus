@@ -35,6 +35,22 @@ bower install observe-plus
 	<script src="bower_components/observe-plus/observe-plus.min.js"></script>
 ```
 
+## How to use?
+
+Remember that you need to have Object.observe and Array.observe in order for observe-plus to work:
+
+### In node.js
+
+Run with the --harmony option:
+
+```bash
+node --harmony myscript.js
+```
+
+### In Chrome
+
+enable the harmony flag, navigate to [chrome://flags/#enable-javascript-harmony](chrome://flags/#enable-javascript-harmony)
+
 ## API
 
 ```js
