@@ -17,22 +17,8 @@ Check Kangax' ES compat table to see where Object.observe (ES7) is available : h
 
 ## Installation:
 
-In node.js or if you use browserify (else, you should!)
-
 ```bash
 npm install observe-plus
-```
-
-In the browser:
-
-```bash
-bower install observe-plus
-```
-
-```html
-	<script src="bower_components/observe-plus/observe-plus.js"></script>
-	<!-- or, for the minified version -->
-	<script src="bower_components/observe-plus/observe-plus.min.js"></script>
 ```
 
 ## How to use?
