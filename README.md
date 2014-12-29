@@ -76,16 +76,16 @@ Observing generic events on the object such as property added, updated, removed:
 
 ```js
 // Listening to properties being added to the object
-var dispose = observer.observe("new", function (publishedEvent) {
+var dispose = observer.observe("add", function (publishedEvent) {
 	// When a property is be added to the object,
 	// this callback will be called with this === scope
 	// and publishedEvent as the original event such as, for example:
 	publishedEvent.name == "newProperty";
 	publishedEvent.object === plainObject;
-	publishedEvent.type == "new";
+	publishedEvent.type == "add";
 }, scope /* optional */);
 
-// This will trigger the listeners that have subscribed to "new"
+// This will trigger the listeners that have subscribed to "add"
 plainObject.newProperty = "value";
 
 // This will add a listener to properties being updated
@@ -121,13 +121,13 @@ var dispose = observer.observe("newProperty", function (publishedEvent) {
 	// and publishedEvent as the original event such as, for example:
 	publishedEvent.name === "newProperty";
 	publishedEvent.object === plainObject;
-	publishedEvent.type === "new";
+	publishedEvent.type === "add";
 }, scope /* optional */);
 
 // Or similar, but the listener will be called only once:
 observer.observeOnce("newProperty", function (publishedEvent) { ...}, scope /* optional */);
 
-// This will call the callback with the "new" event
+// This will call the callback with the "add" event
 plainObject.newProperty = "value";
 
 // This will call the callback with the "update" event
