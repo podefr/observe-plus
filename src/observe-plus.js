@@ -5,7 +5,18 @@
  */
 "use strict";
 
+var observeArray = require("./observeArray"),
+    observeObject = require("./observeObject");
+
 module.exports = {
-	observeArray: require("./observeArray"),
-	observeObject: require("./observeObject")
+    observe: function (model) {
+        if (Array.isArray(model)) {
+            return observeArray.apply(null, arguments);
+        } else if (typeof model == "object") {
+            return observeObject.apply(null, arguments);
+        }
+        throw new TypeError("observe must be called with an Array or an Object");
+    },
+	observeArray: observeArray,
+	observeObject: observeObject
 };
