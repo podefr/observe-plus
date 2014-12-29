@@ -228,15 +228,15 @@ Note that resume() will also trigger the callbacks asynchronously, to be consist
 
 ## Changelog
 
-## 2.0.1 - 28 DEC 2014
-
-* [Breaking Change] observeIndex(Once) and observeProperty(Once) are renamed to observeValue(Once)
-* Update changelog
-
-### 2.0.0 - 28 DEC 2014
+## 2.1.0 - 28 DEC 2014
 
 * Added .observe that either uses observeArray or observeObject depending on the type of the model to watch
+* [Breaking Change] observeIndex(Once) and observeProperty(Once) are renamed to observeValue(Once).
 * [Breaking Change] Removed bower support and standalone versions of observe-plus for the browser.
+
+## 2.0 - 28 DEC 2014
+
+Beta versions
 
 ### 1.0.1 - 5 MAR 2014
 
