@@ -228,6 +228,11 @@ Note that resume() will also trigger the callbacks asynchronously, to be consist
 
 ## Changelog
 
+## 2.0.0 - 28 DEC 2014
+
+* Added .observe that either uses observeArray or observeObject depending on the type of the model to watch
+* Removed bower support and standalone versions of observe-plus for the browser.
+
 ### 1.0.1 - 5 MAR 2014
 
 * Now throws an error when trying to observe an object in a runtime that doesn't have Object.observe
