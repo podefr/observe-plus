@@ -1,3 +1,4 @@
+/*global describe, it, beforeEach */
 /**
  * observe-plus.js - https://github.com/podefr/observe-plus
  * Copyright(c) 2014 Olivier Scherrer <pode.fr@gmail.com>
@@ -6,7 +7,6 @@
 "use strict";
 
 var chai = require("chai");
-var sinon = require("sinon");
 var expect = chai.expect;
 var asap = require("asap");
 
@@ -57,7 +57,7 @@ describe("GIVEN an observed object", function () {
 
                     expect(firstEvent.type).to.equal("add");
                     expect(firstEvent.name).to.equal("newProperty");
-                    expect(firstEvent.object["newProperty"]).to.equal("newValue");
+                    expect(firstEvent.object.newProperty).to.equal("newValue");
                     expect(observerName).to.equal("observer1");
                     done();
                 });
@@ -102,7 +102,7 @@ describe("GIVEN an observed object", function () {
 
                         expect(firstEvent.type).to.equal("update");
                         expect(firstEvent.name).to.equal("newProperty");
-                        expect(firstEvent.object["newProperty"]).to.equal("updatedValue");
+                        expect(firstEvent.object.newProperty).to.equal("updatedValue");
                         expect(firstEvent.oldValue).to.equal("newValue");
                         done();
                     });
@@ -123,7 +123,7 @@ describe("GIVEN an observed object", function () {
                         var firstEvent = aggregatedEvents[0][0];
 
                         expect(firstEvent.name).to.equal("newProperty");
-                        expect(firstEvent.object["newProperty"]).to.be.undefined;
+                        expect(firstEvent.object.newProperty).to.be.undefined;
                         expect(firstEvent.oldValue).to.equal("newValue");
                         done();
                     });
@@ -200,7 +200,7 @@ describe("GIVEN an observed object", function () {
             asap(function () {
                 var firstEvent = aggregatedEvents[0][0];
                 expect(firstEvent.name).to.equal("newProperty");
-                expect(firstEvent.object["newProperty"]).to.equal("newValue");
+                expect(firstEvent.object.newProperty).to.equal("newValue");
                 expect(firstEvent.oldValue).to.be.undefined;
                 done();
             });
@@ -225,7 +225,7 @@ describe("GIVEN an observed object", function () {
                 asap(function () {
                     var firstEvent = aggregatedEvents[0][0];
                     expect(firstEvent.name).to.equal("newProperty");
-                    expect(firstEvent.object["newProperty"]).to.equal("value");
+                    expect(firstEvent.object.newProperty).to.equal("value");
                     done();
                 });
             });
@@ -253,7 +253,7 @@ describe("GIVEN an observed object", function () {
             asap(function () {
                 var firstEvent = aggregatedEvents[0][0];
                 expect(firstEvent.name).to.equal("newProperty");
-                expect(firstEvent.object["newProperty"]).to.equal("value");
+                expect(firstEvent.object.newProperty).to.equal("value");
                 done();
             });
         });

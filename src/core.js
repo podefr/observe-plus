@@ -17,8 +17,9 @@ module.exports = function Core(Prototype) {
     this.setObject = function setObject(object) {
         if (typeof _prototype.observe != "function") {
             throw new Error("Make sure that the harmony options are enabled in this runtime. " +
-                "Run node with the --harmony option or navigate to chrome://flags/#enable-javascript-harmony" +
-                " in Chrome. Check out https://github.com/podefr/observe-plus for more info");
+                "Run node with the --harmony option or navigate to " +
+                "chrome://flags/#enable-javascript-harmony in Chrome. " +
+                "Check out https://github.com/podefr/observe-plus for more info");
         }
         _object = object;
         _prototype.observe(object, this.treatEvents);
