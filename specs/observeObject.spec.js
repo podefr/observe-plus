@@ -190,7 +190,7 @@ describe("GIVEN an observed object", function () {
 
         beforeEach(function () {
             resetAggregatedEvents();
-            dispose = observer.observeProperty("newProperty", function (ev) {
+            dispose = observer.observeValue("newProperty", function (ev) {
                 aggregatedEvents.push([ev]);
             });
             pojo.newProperty = "newValue";
@@ -243,7 +243,7 @@ describe("GIVEN an observed object", function () {
         var dispose;
         beforeEach(function () {
             resetAggregatedEvents();
-            dispose = observer.observePropertyOnce("newProperty", function (ev) {
+            dispose = observer.observeValueOnce("newProperty", function (ev) {
                 aggregatedEvents.push([ev]);
             });
             pojo.newProperty = "value";
@@ -268,7 +268,7 @@ describe("GIVEN an observed object", function () {
 
     describe("WHEN pausing the updates", function () {
         beforeEach(function () {
-            observer.observeProperty("newProperty", function (ev) {
+            observer.observeValue("newProperty", function (ev) {
                 aggregatedEvents.push([ev]);
             });
             observer.pause();

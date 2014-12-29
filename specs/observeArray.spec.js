@@ -131,7 +131,7 @@ describe("GIVEN an observed array", function () {
     describe("WHEN observing specific indexes", function () {
         beforeEach(function () {
             resetAggregatedEvents();
-            observer.observeIndex(0, function (ev) {
+            observer.observeValue(0, function (ev) {
                 aggregatedEvents.push([ev]);
             });
             array.push("value");
@@ -154,7 +154,7 @@ describe("GIVEN an observed array", function () {
 
         beforeEach(function () {
             resetAggregatedEvents();
-            dispose = observer.observeIndexOnce(0, function (ev) {
+            dispose = observer.observeValueOnce(0, function (ev) {
                 aggregatedEvents.push([ev]);
             });
             array.push("value");

@@ -14,11 +14,11 @@ module.exports = function observeArray(observedArray) {
     _core.setObject(observedArray);
 
     return {
-        observeIndex: function (index, callback, scope) {
+        observeValue: function (index, callback, scope) {
             return _core.addListener("name", index, callback, scope);
         },
 
-        observeIndexOnce: function (index, callback, scope) {
+        observeValueOnce: function (index, callback, scope) {
             return _core.addListenerOnce("name", index, callback, scope);
         },
 

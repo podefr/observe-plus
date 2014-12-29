@@ -180,7 +180,7 @@ dispose();
 You can also listen to a indexes directly:
 
 ```js
-var dispose = observer.observeIndex(10, function (publishedEvent) {
+var dispose = observer.observeValue(10, function (publishedEvent) {
 	//
 }, scope /* optional */);
 
@@ -230,12 +230,13 @@ Note that resume() will also trigger the callbacks asynchronously, to be consist
 
 ## 2.0.1 - 28 DEC 2014
 
+* [Breaking Change] observeIndex(Once) and observeProperty(Once) are renamed to observeValue(Once)
 * Update changelog
 
 ### 2.0.0 - 28 DEC 2014
 
 * Added .observe that either uses observeArray or observeObject depending on the type of the model to watch
-* Removed bower support and standalone versions of observe-plus for the browser.
+* [Breaking Change] Removed bower support and standalone versions of observe-plus for the browser.
 
 ### 1.0.1 - 5 MAR 2014
 

@@ -14,20 +14,20 @@ module.exports = function observeObject(observedObject) {
     _core.setObject(observedObject);
 
     return {
+        observeValue: function (property, callback, scope) {
+            return _core.addListener("name", property, callback, scope);
+        },
+
+        observeValueOnce: function (property, callback, scope) {
+            return _core.addListenerOnce("name", property, callback, scope);
+        },
+
         observe: function (type, callback, scope) {
             return _core.addListener("type", type, callback, scope);
         },
 
-        observeProperty: function (property, callback, scope) {
-            return _core.addListener("name", property, callback, scope);
-        },
-
         observeOnce: function (type, callback, scope) {
             return _core.addListenerOnce("type", type, callback, scope);
-        },
-
-        observePropertyOnce: function (property, callback, scope) {
-            return _core.addListenerOnce("name", property, callback, scope);
         },
 
         unobserve: _core.unsetObject.bind(_core),
