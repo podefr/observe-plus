@@ -89,7 +89,7 @@ describe("GIVEN an observed array", function () {
             describe("WHEN the item is modified", function () {
                 beforeEach(function () {
                     resetAggregatedEvents();
-                    observer.observe("updated", function (ev) {
+                    observer.observe("update", function (ev) {
                         aggregatedEvents.push([ev]);
                     });
                     array[0] = "updatedItem";
@@ -99,7 +99,7 @@ describe("GIVEN an observed array", function () {
                     asap(function () {
                         var firstEvent = aggregatedEvents[0][0];
 
-                        expect(firstEvent.type).to.equal("updated");
+                        expect(firstEvent.type).to.equal("update");
                         expect(firstEvent.object[0]).to.equal("updatedItem");
                         done();
                     });

@@ -33,7 +33,7 @@ describe("GIVEN an observed object", function () {
 
         beforeEach(function () {
             resetAggregatedEvents();
-            dispose = observer.observe("new", function (ev) {
+            dispose = observer.observe("add", function (ev) {
                 aggregatedEvents.push([ev, "observer1"]);
             });
         });
@@ -55,7 +55,7 @@ describe("GIVEN an observed object", function () {
                     var firstEvent = aggregatedEvents[0][0],
                         observerName = aggregatedEvents[0][1];
 
-                    expect(firstEvent.type).to.equal("new");
+                    expect(firstEvent.type).to.equal("add");
                     expect(firstEvent.name).to.equal("newProperty");
                     expect(firstEvent.object["newProperty"]).to.equal("newValue");
                     expect(observerName).to.equal("observer1");
@@ -90,7 +90,7 @@ describe("GIVEN an observed object", function () {
             describe("WHEN the property is modified", function () {
                 beforeEach(function () {
                     resetAggregatedEvents();
-                    observer.observe("updated", function (ev) {
+                    observer.observe("update", function (ev) {
                         aggregatedEvents.push([ev]);
                     });
                     pojo.newProperty = "updatedValue";
@@ -100,7 +100,7 @@ describe("GIVEN an observed object", function () {
                     asap(function () {
                         var firstEvent = aggregatedEvents[0][0];
 
-                        expect(firstEvent.type).to.equal("updated");
+                        expect(firstEvent.type).to.equal("update");
                         expect(firstEvent.name).to.equal("newProperty");
                         expect(firstEvent.object["newProperty"]).to.equal("updatedValue");
                         expect(firstEvent.oldValue).to.equal("newValue");
@@ -112,7 +112,7 @@ describe("GIVEN an observed object", function () {
             describe("WHEN the property is deleted", function () {
                 beforeEach(function () {
                     resetAggregatedEvents();
-                    observer.observe("deleted", function (ev) {
+                    observer.observe("delete", function (ev) {
                         aggregatedEvents.push([ev]);
                     });
                     delete pojo.newProperty;
@@ -136,7 +136,7 @@ describe("GIVEN an observed object", function () {
 
             beforeEach(function () {
                 resetAggregatedEvents();
-                dispose2 = observer.observe("new", function (ev) {
+                dispose2 = observer.observe("add", function (ev) {
                     aggregatedEvents.push([ev, "observer2"]);
                 });
             });
@@ -211,7 +211,7 @@ describe("GIVEN an observed object", function () {
         var dispose;
         beforeEach(function () {
             resetAggregatedEvents();
-            dispose = observer.observeOnce("new", function (ev) {
+            dispose = observer.observeOnce("add", function (ev) {
                 aggregatedEvents.push([ev]);
             });
         });
@@ -300,9 +300,9 @@ describe("GIVEN an observed object", function () {
                             secondEvent = aggregatedEvents[1][0],
                             thirdEvent = aggregatedEvents[2][0];
 
-                        expect(firstEvent.type).to.equal("new");
-                        expect(secondEvent.type).to.equal("updated");
-                        expect(thirdEvent.type).to.equal("deleted");
+                        expect(firstEvent.type).to.equal("add");
+                        expect(secondEvent.type).to.equal("update");
+                        expect(thirdEvent.type).to.equal("delete");
                         done();
                     });
                 });

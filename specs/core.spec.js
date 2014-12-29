@@ -36,8 +36,7 @@ describe("GIVEN core", function () {
         });
 
         describe("WHEN setting the object to observe", function () {
-            var observedObject,
-                callback;
+            var observedObject;
 
             beforeEach(function () {
                 observedObject = {};
