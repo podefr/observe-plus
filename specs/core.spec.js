@@ -261,4 +261,36 @@ describe("GIVEN core", function () {
             });
         });
     });
+
+    describe("WHEN initialized with an object and a namespace", function () {
+        beforeEach(function () {
+            Prototype.observe = sinon.spy();
+            core = new Core(Prototype, "some.deeply.nested");
+        });
+
+        describe("WHEN observing a property", function () {
+            var receivedEvent;
+
+            beforeEach(function () {
+                core.addListener("name", "property", function (ev) {
+                    receivedEvent = ev;
+                });
+            });
+
+            describe("AND changes happen on the object", function () {
+                var event;
+
+                beforeEach(function () {
+                    event = createEvent("add", "property", "value");
+                    core.treatEvents([event]);
+                });
+
+
+                it("THEN prefixes the name of the property with the namespace", function () {
+                    expect(receivedEvent.name).to.equal("some.deeply.nested.property");
+                    expect(receivedEvent.value).to.equal("value");
+                });
+            });
+        });
+    });
 });

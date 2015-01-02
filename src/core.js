@@ -7,7 +7,7 @@
 
 var asap = require("asap");
 
-module.exports = function Core(Prototype) {
+module.exports = function Core(Prototype, namespace) {
     var _prototype = Prototype,
         _object = null,
         _callbacks = {},
@@ -43,6 +43,10 @@ module.exports = function Core(Prototype) {
                 var callback = callbackArray[0],
                     thisObj = callbackArray[1];
                 try {
+                    if (namespace) {
+                        ev.name = namespace + "." + ev.name;
+                    }
+                   // ev.name = namespace ? namespace + "." + ev.name : ev.name;
                     callback.call(thisObj, ev);
                 } catch (err) {
                 }

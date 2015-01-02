@@ -207,6 +207,29 @@ describe("GIVEN an observed object", function () {
         });
     });
 
+    xdescribe("WHEN observing nested properties", function () {
+        beforeEach(function () {
+            resetAggregatedEvents();
+            observer.observeValue("newProperty.nested.property", function (ev) {
+                aggregatedEvents.push([ev]);
+            });
+            pojo.newProperty = {
+                nested: {
+                    property: true
+                }
+            }
+        });
+
+        it("Then publishes an event", function (done) {
+             asap(function () {
+                var firstEvent = aggregatedEvents[0][0];
+                 expect(firstEvent.name).to.equal("newProperty.nested.property");
+                 expect(firstEvent.object.newProperty.nested.property).to.be.true;
+                 done();
+             });
+        });
+    });
+
     describe("WHEN observing only once", function () {
         var dispose;
         beforeEach(function () {
