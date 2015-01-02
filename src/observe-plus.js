@@ -5,18 +5,44 @@
  */
 "use strict";
 
-var observeArray = require("./observeArray"),
-    observeObject = require("./observeObject");
+var Core = require("./core");
 
 module.exports = {
-    observe: function (model) {
-        if (Array.isArray(model)) {
-            return observeArray.apply(null, arguments);
-        } else if (typeof model == "object") {
-            return observeObject.apply(null, arguments);
+    observe: function (observedObject) {
+        var _core;
+
+        if (Array.isArray(observedObject)) {
+            _core = new Core(Array);
+        } else if (typeof observedObject == "object") {
+            _core = new Core(Object);
+        } else {
+            throw new TypeError("observe must be called with an Array or an Object");
         }
-        throw new TypeError("observe must be called with an Array or an Object");
-    },
-	observeArray: observeArray,
-	observeObject: observeObject
+
+        _core.setObject(observedObject);
+
+        return {
+            observeValue: function (index, callback, scope) {
+                return _core.addListener("name", index, callback, scope);
+            },
+
+            observeValueOnce: function (index, callback, scope) {
+                return _core.addListenerOnce("name", index, callback, scope);
+            },
+
+            observe: function (type, callback, scope) {
+                return _core.addListener("type", type, callback, scope);
+            },
+
+            observeOnce: function (type, callback, scope) {
+                return _core.addListenerOnce("type", type, callback, scope);
+            },
+
+            unobserve: _core.unsetObject.bind(_core),
+
+            pause: _core.pause,
+
+            resume: _core.resume
+        };
+    }
 };

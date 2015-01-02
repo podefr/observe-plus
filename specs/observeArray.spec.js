@@ -10,7 +10,7 @@ var chai = require("chai");
 var expect = chai.expect;
 var asap = require("asap");
 
-var observeArray = require("../src/observe-plus").observeArray;
+var observeArray = require("../src/observe-plus").observe;
 
 describe("GIVEN an observed array", function () {
 
@@ -38,7 +38,7 @@ describe("GIVEN an observed array", function () {
             });
         });
 
-        it("THEN shouldnt publish any event before a new item is added", function (done) {
+        it("THEN shouldn't publish any event before a new item is added", function (done) {
             asap(function () {
                 expect(aggregatedEvents.length).to.equal(0);
                 done();

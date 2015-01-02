@@ -228,6 +228,11 @@ Note that resume() will also trigger the callbacks asynchronously, to be consist
 
 ## Changelog
 
+## 3.0.0 - WIP
+
+* Can observe nested objects and arrays
+* Unified observeArray and observeObject using polymorphism
+
 ## 2.1.0 - 28 DEC 2014
 
 * Added .observe that either uses observeArray or observeObject depending on the type of the model to watch

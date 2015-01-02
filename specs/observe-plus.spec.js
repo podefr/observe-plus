@@ -12,30 +12,6 @@ var expect = chai.expect;
 var observePlus = require("../src/observe-plus");
 
 describe("GIVEN observePlus", function () {
-    describe("WHEN I call the observe method with an Array", function () {
-        var observer;
-
-        beforeEach(function () {
-            observer = observePlus.observe([]);
-        });
-
-        it("THEN returns observeArray", function () {
-            expect(observer.observeIndex).to.be.truthy;
-        });
-    });
-
-    describe("WHEN I call the observe method with an Object", function () {
-        var observer;
-
-        beforeEach(function () {
-            observer = observePlus.observe({});
-        });
-
-        it("THEN returns observeArray", function () {
-            expect(observer.observeProperty).to.be.truthy;
-        });
-    });
-
     describe("WHEN I call the observe method with the wrong type", function () {
         it("THEN throws a TypeError", function () {
             expect(function () {

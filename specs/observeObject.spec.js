@@ -10,7 +10,7 @@ var chai = require("chai");
 var expect = chai.expect;
 var asap = require("asap");
 
-var observeObject = require("../src/observe-plus").observeObject;
+var observeObject = require("../src/observe-plus").observe;
 
 describe("GIVEN an observed object", function () {
 
