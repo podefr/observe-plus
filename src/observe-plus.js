@@ -5,44 +5,36 @@
  */
 "use strict";
 
-var Core = require("./core");
+var Observe = require("./Observe");
+var loop = require("simple-loop");
+
 
 module.exports = {
-    observe: function (observedObject) {
-        var _core;
-
-        if (Array.isArray(observedObject)) {
-            _core = new Core(Array);
-        } else if (typeof observedObject == "object") {
-            _core = new Core(Object);
-        } else {
-            throw new TypeError("observe must be called with an Array or an Object");
-        }
-
-        _core.setObject(observedObject);
+    observe: function observe(observedObject) {
+        var _observe = new Observe(observedObject);
 
         return {
-            observeValue: function (index, callback, scope) {
-                return _core.addListener("name", index, callback, scope);
+            observeValue: function observeValue(index, callback, scope) {
+                return _observe.addListener("name", index, callback, scope);
             },
 
-            observeValueOnce: function (index, callback, scope) {
-                return _core.addListenerOnce("name", index, callback, scope);
+            observeValueOnce: function observeValueOnce(index, callback, scope) {
+                return _observe.addListenerOnce("name", index, callback, scope);
             },
 
-            observe: function (type, callback, scope) {
-                return _core.addListener("type", type, callback, scope);
+            observe: function observe(type, callback, scope) {
+                return _observe.addListener("type", type, callback, scope);
             },
 
-            observeOnce: function (type, callback, scope) {
-                return _core.addListenerOnce("type", type, callback, scope);
+            observeOnce: function observeOnce(type, callback, scope) {
+                return _observe.addListenerOnce("type", type, callback, scope);
             },
 
-            unobserve: _core.unsetObject.bind(_core),
+            unobserve: _observe.unsetObject.bind(_observe),
 
-            pause: _core.pause,
+            pause: _observe.pause,
 
-            resume: _core.resume
+            resume: _observe.resume
         };
     }
 };
