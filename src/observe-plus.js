@@ -30,7 +30,7 @@ module.exports = {
                 return _observe.addListenerOnce("type", type, callback, scope);
             },
 
-            unobserve: _observe.unsetObject.bind(_observe),
+            unobserve: _observe.dispose.bind(_observe),
 
             pause: _observe.pause,
 

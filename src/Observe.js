@@ -13,43 +13,9 @@ module.exports = function Observe(observedObject, namespace) {
         _savedEvents = [],
         _prototype = null;
 
-    this.unsetObject = function unsetObject() {
+    this.dispose = function dispose() {
         _prototype.unobserve(observedObject, treatEvents);
     };
-
-    function treatEvents(events) {
-        if (_isPaused) {
-            _savedEvents = _savedEvents.concat(events);
-        } else {
-            publishEvents(events);
-        }
-    }
-
-    function publishEvents(events) {
-        events.forEach(function (ev) {
-            function executeCallback(callbackArray) {
-                var callback = callbackArray[0],
-                    thisObj = callbackArray[1];
-                try {
-                    if (namespace) {
-                        ev.name = namespace + "." + ev.name;
-                    }
-                   // ev.name = namespace ? namespace + "." + ev.name : ev.name;
-                    callback.call(thisObj, ev);
-                } catch (err) {
-                }
-            }
-
-            Object.keys(_callbacks).forEach(function (propertyName) {
-                var callbacksForProperty = _callbacks[propertyName],
-                    eventPropertyName = ev[propertyName];
-
-                if (callbacksForProperty && callbacksForProperty[eventPropertyName]) {
-                    callbacksForProperty[eventPropertyName].forEach(executeCallback);
-                }
-            });
-        });
-    }
 
     this.addListener = function addListener(propertyName, propertyValue, callback, scope) {
         var item = [callback, scope];
@@ -103,5 +69,40 @@ module.exports = function Observe(observedObject, namespace) {
     }
 
     _prototype.observe(observedObject, treatEvents);
+
+
+    function treatEvents(events) {
+        if (_isPaused) {
+            _savedEvents = _savedEvents.concat(events);
+        } else {
+            publishEvents(events);
+        }
+    }
+
+    function publishEvents(events) {
+        events.forEach(function (ev) {
+            function executeCallback(callbackArray) {
+                var callback = callbackArray[0],
+                    thisObj = callbackArray[1];
+                try {
+                    if (namespace) {
+                        ev.name = namespace + "." + ev.name;
+                    }
+                    // ev.name = namespace ? namespace + "." + ev.name : ev.name;
+                    callback.call(thisObj, ev);
+                } catch (err) {
+                }
+            }
+
+            Object.keys(_callbacks).forEach(function (propertyName) {
+                var callbacksForProperty = _callbacks[propertyName],
+                    eventPropertyName = ev[propertyName];
+
+                if (callbacksForProperty && callbacksForProperty[eventPropertyName]) {
+                    callbacksForProperty[eventPropertyName].forEach(executeCallback);
+                }
+            });
+        });
+    }
 
 };
