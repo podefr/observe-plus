@@ -13,10 +13,6 @@ module.exports = function Observe(observedObject, namespace) {
         _savedEvents = [],
         _prototype = null;
 
-    this.dispose = function dispose() {
-        _prototype.unobserve(observedObject, treatEvents);
-    };
-
     this.addListener = function addListener(propertyName, propertyValue, callback, scope) {
         var item = [callback, scope];
         _callbacks[propertyName] = _callbacks[propertyName] || {};
@@ -53,6 +49,10 @@ module.exports = function Observe(observedObject, namespace) {
             publishEvents(_savedEvents);
             _savedEvents = [];
         });
+    };
+
+    this.dispose = function dispose() {
+        _prototype.unobserve(observedObject, treatEvents);
     };
 
     if (observedObject === null || typeof observedObject != "object") {
