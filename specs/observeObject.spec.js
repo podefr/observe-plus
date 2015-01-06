@@ -220,7 +220,7 @@ describe("GIVEN an observed object", function () {
             }
         });
 
-        it("Then publishes an event", function (done) {
+        xit("Then publishes an event", function (done) {
              asap(function () {
                 var firstEvent = aggregatedEvents[0][0];
                  expect(firstEvent.name).to.equal("newProperty.nested.property");
