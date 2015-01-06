@@ -43,6 +43,10 @@ module.exports = function Observe(observedObject, namespace) {
         _isPaused = true;
     };
 
+    this.isPaused = function isPaused() {
+        return _isPaused;
+    };
+
     this.resume = function resume() {
         asap(function () {
             _isPaused = false;

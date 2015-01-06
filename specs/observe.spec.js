@@ -74,6 +74,51 @@ describe("GIVEN Observe", function () {
                     });
                 });
             });
+
+            describe("WHEN pausing the event publishing", function () {
+                beforeEach(function () {
+                    observe.pause();
+                });
+
+                it("THEN tells that the publishing is paused", function () {
+                    expect(observe.isPaused()).to.equal(true);
+                });
+
+                describe("WHEN the property is updated", function () {
+                    beforeEach(function () {
+                        observedObject.newProperty = "value";
+                        observedObject.newProperty = "newValue";
+                        delete observedObject.newProperty;
+                    });
+
+                    it("THEN doesn't publish any event", function (done) {
+                        asap(function () {
+                            expect(callback.calledThrice).to.be.false;
+                            done();
+                        });
+                    });
+
+                    describe("WHEN resuming the event publishing", function () {
+                        beforeEach(function () {
+                            observe.resume();
+                        });
+
+                        it("THEN tells that the publishing isn't paused", function (done) {
+                            asap(function () {
+                                expect(observe.isPaused()).to.equal(false);
+                                done();
+                            });
+                        });
+
+                        it("THEN publishes all the events", function (done) {
+                            asap(function () {
+                                expect(callback.calledThrice).to.be.true;
+                                done();
+                            });
+                        });
+                    });
+                });
+            });
         });
 
         describe("WHEN listening only once to changes on a property", function () {
@@ -134,6 +179,5 @@ describe("GIVEN Observe", function () {
                 });
             });
         });
-
     });
 });
