@@ -51,7 +51,7 @@ module.exports = function Observe(observedObject, namespace) {
         });
     };
 
-    this.dispose = function dispose() {
+    this.destroy = function destroy() {
         _prototype.unobserve(observedObject, treatEvents);
     };
 
