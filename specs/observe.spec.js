@@ -19,6 +19,12 @@ describe("GIVEN Observe", function () {
             expect(function () {
                 new Observe();
             }).to.throw("observe must be called with an Array or an Object");
+            expect(function () {
+                new Observe(null);
+            }).to.throw("observe must be called with an Array or an Object");
+            expect(function () {
+                new Observe(1);
+            }).to.throw("observe must be called with an Array or an Object");
         });
     });
 
