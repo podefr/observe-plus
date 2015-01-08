@@ -70,13 +70,12 @@ describe("GIVEN an observed object", function () {
                 });
             });
 
-
-            describe("WHEN unobserving", function () {
+            describe("WHEN destroying", function () {
                 beforeEach(function () {
                     resetAggregatedEvents();
-                    observer.unobserve();
+                    observer.destroy();
 
-                    pojo.anoterProperty = "value";
+                    pojo.anotherProperty = "value";
                 });
 
                 it("THEN doesn't publish events anymore", function (done) {

@@ -13,20 +13,11 @@ module.exports = {
     observe: function observe(observedObject) {
         var _observe = new Observe(observedObject);
 
-        return {
-            observeValue:_observe.addListener.bind(_observe, "name"),
+        _observe.observeValue = _observe.addListener.bind(_observe, "name");
+        _observe.observeValueOnce = _observe.addListenerOnce.bind(_observe, "name");
+        _observe.observe = _observe.addListener.bind(_observe, "type");
+        _observe.observeOnce = _observe.addListenerOnce.bind(_observe, "type");
 
-            observeValueOnce: _observe.addListenerOnce.bind(_observe, "name"),
-
-            observe: _observe.addListener.bind(_observe, "type"),
-
-            observeOnce: _observe.addListenerOnce.bind(_observe, "type"),
-
-            unobserve: _observe.destroy.bind(_observe),
-
-            pause: _observe.pause,
-
-            resume: _observe.resume
-        };
+        return _observe;
     }
 };

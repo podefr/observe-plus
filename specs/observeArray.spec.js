@@ -70,10 +70,10 @@ describe("GIVEN an observed array", function () {
                 });
             });
 
-            describe("WHEN unobserving", function () {
+            describe("WHEN destroying", function () {
                 beforeEach(function () {
                     resetAggregatedEvents();
-                    observer.unobserve();
+                    observer.destroy();
 
                     array.push("value");
                 });
