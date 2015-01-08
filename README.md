@@ -232,6 +232,8 @@ Note that resume() will also trigger the callbacks asynchronously, to be consist
 
 * Can observe nested objects and arrays
 * Unified observeArray and observeObject using polymorphism
+* Using destroy terminology instead of unobserve
+* Add isPaused method
 
 ## 2.1.0 - 28 DEC 2014
 
