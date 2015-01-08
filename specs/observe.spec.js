@@ -213,6 +213,21 @@ describe("GIVEN Observe", function () {
             });
         });
 
+        describe("WHEN destroying the observer", function () {
+            beforeEach(function () {
+                observe.destroy();
+
+                observedArray.pop();
+            });
+
+            it("THEN doesn't publish events anymore", function (done) {
+                asap(function () {
+                    expect(callback.calledTwice).to.be.false;
+                    done();
+                });
+            });
+        });
     });
+
 
 });
