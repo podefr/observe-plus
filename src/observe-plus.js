@@ -14,21 +14,13 @@ module.exports = {
         var _observe = new Observe(observedObject);
 
         return {
-            observeValue: function observeValue(index, callback, scope) {
-                return _observe.addListener("name", index, callback, scope);
-            },
+            observeValue:_observe.addListener.bind(_observe, "name"),
 
-            observeValueOnce: function observeValueOnce(index, callback, scope) {
-                return _observe.addListenerOnce("name", index, callback, scope);
-            },
+            observeValueOnce: _observe.addListenerOnce.bind(_observe, "name"),
 
-            observe: function observe(type, callback, scope) {
-                return _observe.addListener("type", type, callback, scope);
-            },
+            observe: _observe.addListener.bind(_observe, "type"),
 
-            observeOnce: function observeOnce(type, callback, scope) {
-                return _observe.addListenerOnce("type", type, callback, scope);
-            },
+            observeOnce: _observe.addListenerOnce.bind(_observe, "type"),
 
             unobserve: _observe.destroy.bind(_observe),
 
