@@ -186,4 +186,33 @@ describe("GIVEN Observe", function () {
             });
         });
     });
+
+    describe("WHEN pop is called on an observedArray", function () {
+        var observedArray, observe, callback;
+
+        beforeEach(function () {
+            observedArray = [1, 2];
+            callback = sinon.spy();
+            observe = new Observe(observedArray);
+            observe.addListener("type", "splice", callback);
+            observedArray.pop();
+
+        });
+
+        it("THEN publishes a splice event", function (done) {
+            asap(function () {
+                expect(callback.calledOnce).to.be.true;
+                expect(callback.lastCall.args[0]).to.eql({
+                    type: "splice",
+                    object: observedArray,
+                    index: 1,
+                    removed: [2],
+                    addedCount: 0
+                });
+                done();
+            });
+        });
+
+    });
+
 });
