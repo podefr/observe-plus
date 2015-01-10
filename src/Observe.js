@@ -79,7 +79,6 @@ module.exports = function Observe(observedObject, namespace) {
 
     _prototype.observe(observedObject, treatEvents);
 
-
     function treatEvents(events) {
         if (_isPaused) {
             _savedEvents = _savedEvents.concat(events);
@@ -124,8 +123,6 @@ module.exports = function Observe(observedObject, namespace) {
         var value = event.object[event.name],
             key = event.name,
             newNamespace;
-
-       // console.log("added", event, "----")
 
         if (isValidValueToObserve(value)) {
             newNamespace = namespace ? namespace + "." + key : key;

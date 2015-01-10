@@ -206,7 +206,7 @@ describe("GIVEN an observed object", function () {
         });
     });
 
-    describe.only("WHEN observing nested properties", function () {
+    xdescribe("WHEN observing nested properties", function () {
         beforeEach(function () {
             resetAggregatedEvents();
             observer.observeValue("newProperty.nested.property", function (ev) {
