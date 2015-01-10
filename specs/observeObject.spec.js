@@ -210,7 +210,6 @@ describe("GIVEN an observed object", function () {
         beforeEach(function () {
             resetAggregatedEvents();
             observer.observeValue("newProperty.nested.property", function (ev) {
-                console.log('ev', ev);
                 aggregatedEvents.push([ev]);
             });
             pojo.newProperty = {
