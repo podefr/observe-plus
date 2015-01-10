@@ -80,7 +80,7 @@ module.exports = function Observe(observedObject, namespace) {
     _prototype.observe(observedObject, treatEvents);
 
 
-    function treatEvents(events) { console.log(events);
+    function treatEvents(events) {
         if (_isPaused) {
             _savedEvents = _savedEvents.concat(events);
         } else {
@@ -89,7 +89,6 @@ module.exports = function Observe(observedObject, namespace) {
     }
 
     function publishEvents(events) {
-
         events.forEach(function (ev) {
             function executeCallback(callbackArray) {
                 var callback = callbackArray[0],
@@ -102,9 +101,8 @@ module.exports = function Observe(observedObject, namespace) {
 
             Object.keys(_callbacks).forEach(function (eventType) {
                 var callbacksForEventType = _callbacks[eventType],
-                    eventPropertyName = ev[eventType],
-                    namespaced;
-//console.log(callbacksForEventType, eventPropertyName)
+                    eventPropertyName = ev[eventType];
+
                 if (callbacksForEventType && callbacksForEventType[eventPropertyName]) {
                     callbacksForEventType[eventPropertyName].forEach(executeCallback);
                 }
