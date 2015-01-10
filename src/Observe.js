@@ -6,6 +6,11 @@
 "use strict";
 
 var asap = require("asap");
+var loop = require("simple-loop");
+
+function isValidValueToObserve(val) {
+    return val !== null && typeof val == "object";
+}
 
 module.exports = function Observe(observedObject, namespace) {
     var _callbacks = {},
@@ -75,7 +80,7 @@ module.exports = function Observe(observedObject, namespace) {
     _prototype.observe(observedObject, treatEvents);
 
 
-    function treatEvents(events) {
+    function treatEvents(events) { console.log(events);
         if (_isPaused) {
             _savedEvents = _savedEvents.concat(events);
         } else {
@@ -84,29 +89,51 @@ module.exports = function Observe(observedObject, namespace) {
     }
 
     function publishEvents(events) {
+
         events.forEach(function (ev) {
             function executeCallback(callbackArray) {
                 var callback = callbackArray[0],
                     thisObj = callbackArray[1];
                 try {
-                    if (namespace) {
-                        ev.name = namespace + "." + ev.name;
-                    }
-                    // ev.name = namespace ? namespace + "." + ev.name : ev.name;
                     callback.call(thisObj, ev);
                 } catch (err) {
                 }
             }
 
-            Object.keys(_callbacks).forEach(function (propertyName) {
-                var callbacksForProperty = _callbacks[propertyName],
-                    eventPropertyName = ev[propertyName];
-
-                if (callbacksForProperty && callbacksForProperty[eventPropertyName]) {
-                    callbacksForProperty[eventPropertyName].forEach(executeCallback);
+            Object.keys(_callbacks).forEach(function (eventType) {
+                var callbacksForEventType = _callbacks[eventType],
+                    eventPropertyName = ev[eventType],
+                    namespaced;
+//console.log(callbacksForEventType, eventPropertyName)
+                if (callbacksForEventType && callbacksForEventType[eventPropertyName]) {
+                    callbacksForEventType[eventPropertyName].forEach(executeCallback);
                 }
             });
         });
     }
+
+    loop(observedObject, function (value, key) {
+        var newNamespace;
+
+        if (isValidValueToObserve(value)) {
+            newNamespace = namespace ? namespace + "." + key : key;
+
+            new Observe(value, newNamespace);
+        }
+    });
+
+    this.addListener("type", "add", function (event) {
+        var value = event.object[event.name],
+            key = event.name,
+            newNamespace;
+
+       // console.log("added", event, "----")
+
+        if (isValidValueToObserve(value)) {
+            newNamespace = namespace ? namespace + "." + key : key;
+
+            new Observe(value, newNamespace);
+        }
+    });
 
 };

@@ -6,12 +6,10 @@
 "use strict";
 
 var Observe = require("./Observe");
-var loop = require("simple-loop");
-
 
 module.exports = {
-    observe: function observe(observedObject) {
-        var _observe = new Observe(observedObject);
+    observe: function observe(observedObject, namespace) {
+        var _observe = new Observe(observedObject, namespace);
 
         _observe.observeValue = _observe.addListener.bind(_observe, "name");
         _observe.observeValueOnce = _observe.addListenerOnce.bind(_observe, "name");

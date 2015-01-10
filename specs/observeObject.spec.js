@@ -206,26 +206,40 @@ describe("GIVEN an observed object", function () {
         });
     });
 
-    describe("WHEN observing nested properties", function () {
+    describe.only("WHEN observing nested properties", function () {
         beforeEach(function () {
             resetAggregatedEvents();
             observer.observeValue("newProperty.nested.property", function (ev) {
+                console.log('ev', ev);
                 aggregatedEvents.push([ev]);
             });
             pojo.newProperty = {
                 nested: {
                     property: true
                 }
-            }
+            };
         });
 
-        xit("Then publishes an event", function (done) {
+        it("Then publishes an event", function (done) {
              asap(function () {
                 var firstEvent = aggregatedEvents[0][0];
                  expect(firstEvent.name).to.equal("newProperty.nested.property");
                  expect(firstEvent.object.newProperty.nested.property).to.be.true;
                  done();
              });
+        });
+
+        describe("WHEN the nested property is modified", function () {
+            beforeEach(function () {
+                pojo.newProperty.nested.property = false;
+            });
+
+            it("THEN publishes an update event", function (done) {
+                var lastEvent = aggregatedEvents[1][0];
+                expect(lastEvent.name).to.equal("newProperty.nested.property");
+                expect(lastEvent.object.newProperty.nested.property).to.be.false;
+                done();
+            });
         });
     });
 
