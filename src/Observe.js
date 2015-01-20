@@ -6,14 +6,19 @@
 "use strict";
 
 var asap = require("asap");
-var loop = require("simple-loop");
+var loop = require("simple-loop"),
+    nestedProperty = require("nested-property");
 
 function isValidValueToObserve(val) {
     return val !== null && typeof val == "object";
 }
 
-module.exports = function Observe(observedObject, namespace) {
-    var _callbacks = {},
+function clone(obj) {
+    return JSON.parse(JSON.stringify(obj));
+}
+
+module.exports = function Observe(observedObject, namespace, callbacks, rootObject) {
+    var _callbacks = callbacks || {},
         _isPaused = false,
         _savedEvents = [],
         _prototype = null;
@@ -89,22 +94,38 @@ module.exports = function Observe(observedObject, namespace) {
 
     function publishEvents(events) {
         events.forEach(function (ev) {
-            function executeCallback(callbackArray) {
+            function executeCallback(newEvent, callbackArray) {
                 var callback = callbackArray[0],
                     thisObj = callbackArray[1];
                 try {
-                    callback.call(thisObj, ev);
+                    callback.call(thisObj, newEvent);
                 } catch (err) {
                 }
             }
 
             Object.keys(_callbacks).forEach(function (eventType) {
                 var callbacksForEventType = _callbacks[eventType],
-                    eventPropertyName = ev[eventType];
+                    eventPropertyName = ev[eventType],
+                    newEvent;
 
-                if (callbacksForEventType && callbacksForEventType[eventPropertyName]) {
-                    callbacksForEventType[eventPropertyName].forEach(executeCallback);
+                if (eventType == "name") {
+
+                    newEvent = clone(ev);
+                    newEvent.object = rootObject || observedObject;
+
+                    loop(callbacksForEventType, function (callbacks, property) {
+                        if (nestedProperty.isIn(rootObject || observedObject, property, newEvent.object)) {
+                            newEvent.name = property;
+                            callbacks.forEach(executeCallback.bind(null, newEvent));
+                        }
+                    });
+
+                } else {
+                    if (callbacksForEventType && callbacksForEventType[eventPropertyName]) {
+                        callbacksForEventType[eventPropertyName].forEach(executeCallback.bind(null, ev));
+                    }
                 }
+
             });
         });
     }
@@ -115,7 +136,7 @@ module.exports = function Observe(observedObject, namespace) {
         if (isValidValueToObserve(value)) {
             newNamespace = namespace ? namespace + "." + key : key;
 
-            new Observe(value, newNamespace);
+            new Observe(value, newNamespace, _callbacks, rootObject || observedObject);
         }
     });
 
@@ -127,7 +148,7 @@ module.exports = function Observe(observedObject, namespace) {
         if (isValidValueToObserve(value)) {
             newNamespace = namespace ? namespace + "." + key : key;
 
-            new Observe(value, newNamespace);
+            new Observe(value, newNamespace, _callbacks, rootObject || observedObject);
         }
     });
 

@@ -206,7 +206,7 @@ describe("GIVEN an observed object", function () {
         });
     });
 
-    describe.only("WHEN observing nested properties", function () {
+    describe("WHEN observing nested properties", function () {
         beforeEach(function () {
             resetAggregatedEvents();
             observer.observeValue("newProperty.nested.property", function (ev) {
@@ -230,14 +230,18 @@ describe("GIVEN an observed object", function () {
 
         describe("WHEN the nested property is modified", function () {
             beforeEach(function () {
+                resetAggregatedEvents();
                 pojo.newProperty.nested.property = false;
             });
 
             it("THEN publishes an update event", function (done) {
-                var lastEvent = aggregatedEvents[1][0];
-                expect(lastEvent.name).to.equal("newProperty.nested.property");
-                expect(lastEvent.object.newProperty.nested.property).to.be.false;
-                done();
+                asap(function () {
+                    var lastEvent = aggregatedEvents[0][0];
+                    expect(lastEvent.name).to.equal("newProperty.nested.property");
+                    expect(lastEvent.object.newProperty.nested.property).to.be.false;
+                    expect(lastEvent.type).to.equal("update");
+                    done();
+                });
             });
         });
     });

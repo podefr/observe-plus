@@ -138,12 +138,18 @@ describe("GIVEN an observed array", function () {
             array[0] = "newValue";
         });
 
-        it("THEN publishes an event with the new value and the old value", function (done) {
+        it("THEN publishes an event with the new value and a new event with the old value", function (done) {
             asap(function () {
                 var firstEvent = aggregatedEvents[0][0];
+                expect(firstEvent.type).to.equal("splice");
                 expect(firstEvent.name).to.equal("0");
                 expect(firstEvent.object[0]).to.equal("newValue");
-                expect(firstEvent.oldValue).to.equal("value");
+
+                var lastEvent = aggregatedEvents[1][0];
+                expect(lastEvent.type).to.equal("update");
+                expect(lastEvent.name).to.equal("0");
+                expect(lastEvent.object[0]).to.equal("newValue");
+                expect(lastEvent.oldValue).to.equal("value");
                 done();
             });
         });
@@ -164,9 +170,9 @@ describe("GIVEN an observed array", function () {
         it("THEN the observer is called", function (done) {
             asap(function () {
                 var firstEvent = aggregatedEvents[0][0];
+                expect(firstEvent.type).to.equal("splice");
                 expect(firstEvent.name).to.equal("0");
                 expect(firstEvent.object[0]).to.equal("newValue");
-                expect(firstEvent.oldValue).to.equal("value");
                 done();
             });
         });
