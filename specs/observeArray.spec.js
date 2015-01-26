@@ -155,7 +155,7 @@ describe("GIVEN an observed array", function () {
         });
     });
 
-    describe.only("WHEN observing nested properties", function () {
+    describe("WHEN observing nested properties", function () {
         beforeEach(function () {
             resetAggregatedEvents();
             observer.observeValue("0.nested.property", function (ev) {
@@ -190,10 +190,28 @@ describe("GIVEN an observed array", function () {
 
             it("THEN publishes an event with the new value", function (done) {
                 asap(function () {
-                    debugger;
                     var event = aggregatedEvents[1][0];
                     expect(event).to.eql({
                         type: "update",
+                        object: array,
+                        name: "0.nested.property",
+                        oldValue: true
+                    });
+                    done();
+                });
+            });
+        });
+
+        describe("WHEN the nested property is deleted", function () {
+            beforeEach(function () {
+                delete array[0].nested.property;
+            });
+
+            it("THEN publishes a delete event", function (done) {
+                asap(function () {
+                    var event = aggregatedEvents[1][0];
+                    expect(event).to.eql({
+                        type: "delete",
                         object: array,
                         name: "0.nested.property",
                         oldValue: true
