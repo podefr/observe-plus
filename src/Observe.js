@@ -124,6 +124,10 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
 
                     loop(callbacksForEventType, function (callbacks, property) {
                         if (nestedProperty.isIn(rootObject || observedObject, property, newEvent.object)) {
+                            if (newEvent.type === "update" &&
+                                getValueFromPartialPath(property, namespacedName, ev.oldValue) === nestedProperty.get(rootObject || observedObject, property)) {
+                                return;
+                            }
                             newEvent.name = property;
                             newEvent.oldValue = getValueFromPartialPath(property, namespacedName, ev.oldValue);
                             callbacks.forEach(executeCallback.bind(null, newEvent));

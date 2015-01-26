@@ -263,6 +263,22 @@ describe("GIVEN an observed object", function () {
                     });
                 });
             });
+
+            describe("WHEN a parent object is replaced and the value of the observed nested property doesn't change", function () {
+                beforeEach(function () {
+                    resetAggregatedEvents();
+                    pojo.newProperty.nested = {
+                        property: false
+                    };
+                });
+
+                it("THEN doesn't trigger an event", function (done) {
+                    asap(function () {
+                        expect(aggregatedEvents[0]).to.be.undefined;
+                        done();
+                    });
+                });
+            });
         });
     });
 
