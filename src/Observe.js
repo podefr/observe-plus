@@ -128,7 +128,12 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                                 getValueFromPartialPath(property, namespacedName, ev.oldValue) === nestedProperty.get(rootObject || observedObject, property)) {
                                 return;
                             }
-                            newEvent.name = property;
+                            if (newEvent.hasOwnProperty("name")) {
+                                newEvent.name = property;
+                            }
+                            if (newEvent.hasOwnProperty("index")) {
+                                newEvent.index = property;
+                            }
                             newEvent.oldValue = getValueFromPartialPath(property, namespacedName, ev.oldValue);
                             callbacks.forEach(executeCallback.bind(null, newEvent));
                         }
@@ -163,6 +168,20 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
             newNamespace = namespace ? namespace + "." + key : key;
 
             new Observe(value, newNamespace, _callbacks, rootObject || observedObject);
+        }
+    });
+
+    this.addListener("type", "splice", function (event) {
+        if (event.addedCount > 0) {
+            event.object
+                .slice(event.index, event.addCount)
+                .forEach(function (value, index) {
+                    if (isValidValueToObserve(value)) {
+                        var newNamespace = namespace ? namespace + "." + index : index;
+
+                        new Observe(value, newNamespace, _callbacks, rootObject || observedObject);
+                    }
+                });
         }
     });
 

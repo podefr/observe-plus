@@ -142,7 +142,7 @@ describe("GIVEN an observed array", function () {
             asap(function () {
                 var firstEvent = aggregatedEvents[0][0];
                 expect(firstEvent.type).to.equal("splice");
-                expect(firstEvent.name).to.equal("0");
+                expect(firstEvent.index).to.equal("0");
                 expect(firstEvent.object[0]).to.equal("newValue");
 
                 var lastEvent = aggregatedEvents[1][0];
@@ -151,6 +151,55 @@ describe("GIVEN an observed array", function () {
                 expect(lastEvent.object[0]).to.equal("newValue");
                 expect(lastEvent.oldValue).to.equal("value");
                 done();
+            });
+        });
+    });
+
+    describe.only("WHEN observing nested properties", function () {
+        beforeEach(function () {
+            resetAggregatedEvents();
+            observer.observeValue("0.nested.property", function (ev) {
+                aggregatedEvents.push([ev]);
+            });
+            array.push({
+                nested: {
+                    property: true
+                }
+            });
+        });
+
+        it("THEN publishes an event with the new value", function (done) {
+            asap(function () {
+                var event = aggregatedEvents[0][0];
+                expect(event).to.eql({
+                    type: "splice",
+                    object: array,
+                    index: "0.nested.property",
+                    removed: [],
+                    addedCount: 1,
+                    oldValue: undefined
+                });
+                done();
+            });
+        });
+
+        describe("WHEN the nested property is updated", function () {
+            beforeEach(function () {
+                array[0].nested.property = false;
+            });
+
+            it("THEN publishes an event with the new value", function (done) {
+                asap(function () {
+                    debugger;
+                    var event = aggregatedEvents[1][0];
+                    expect(event).to.eql({
+                        type: "update",
+                        object: array,
+                        name: "0.nested.property",
+                        oldValue: true
+                    });
+                    done();
+                });
             });
         });
     });
@@ -171,13 +220,13 @@ describe("GIVEN an observed array", function () {
             asap(function () {
                 var firstEvent = aggregatedEvents[0][0];
                 expect(firstEvent.type).to.equal("splice");
-                expect(firstEvent.name).to.equal("0");
+                expect(firstEvent.index).to.equal("0");
                 expect(firstEvent.object[0]).to.equal("newValue");
                 done();
             });
         });
 
-        it("THEN is diposed of", function (done) {
+        it("THEN is disposed of", function (done) {
             asap(function () {
                 expect(dispose()).to.be.false;
                 done();
