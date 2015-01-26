@@ -280,6 +280,26 @@ describe("GIVEN an observed object", function () {
                 });
             });
         });
+
+        describe("WHEN the nested property is deleted ", function () {
+            beforeEach(function () {
+                resetAggregatedEvents();
+                delete pojo.newProperty.nested;
+            });
+
+            it("THEN publishes a delete event", function (done) {
+                asap(function () {
+                    var firstEvent = aggregatedEvents[0][0];
+                    expect(firstEvent).to.eql({
+                        type: "delete",
+                        name: "newProperty.nested.property",
+                        object: pojo,
+                        oldValue: true
+                    });
+                    done();
+                });
+            });
+        });
     });
 
     describe("WHEN observing only once", function () {
