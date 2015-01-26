@@ -114,13 +114,18 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
             Object.keys(_callbacks).forEach(function (eventType) {
                 var callbacksForEventType = _callbacks[eventType],
                     eventPropertyName = ev[eventType],
-                    newEvent;
+                    newEvent, namespacedName;
 
                 if (eventType == "name") {
 
                     newEvent = clone(ev);
                     newEvent.object = rootObject || observedObject;
-                    var namespacedName = namespace ? namespace + "." + ev.name : ev.name;
+
+                    if (ev.hasOwnProperty("name")) {
+                        namespacedName = namespace ? namespace + "." + ev.name : ev.name;
+                    } else {
+                        namespacedName = namespace ? namespace + "." + ev.index : ev.index;
+                    }
 
                     loop(callbacksForEventType, function (callbacks, property) {
                         if (nestedProperty.isIn(rootObject || observedObject, property, newEvent.object)) {
@@ -130,10 +135,10 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                             }
                             if (newEvent.hasOwnProperty("name")) {
                                 newEvent.name = property;
-                            }
-                            if (newEvent.hasOwnProperty("index")) {
+                            } else {
                                 newEvent.index = property;
                             }
+
                             newEvent.oldValue = getValueFromPartialPath(property, namespacedName, ev.oldValue);
                             callbacks.forEach(executeCallback.bind(null, newEvent));
                         }
@@ -174,12 +179,13 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
     this.addListener("type", "splice", function (event) {
         if (event.addedCount > 0) {
             event.object
-                .slice(event.index, event.addCount)
+                .slice(event.index, event.addedCount)
                 .forEach(function (value, index) {
                     if (isValidValueToObserve(value)) {
-                        var newNamespace = namespace ? namespace + "." + index : index;
+                        var offsettedIndex = index + event.index;
+                        var newNamespace = namespace ? namespace + "." + offsetedIndex : offsettedIndex;
 
-                        new Observe(value, newNamespace, _callbacks, rootObject || observedObject);
+                        new Observe(value, newNamespace + "", _callbacks, rootObject || observedObject);
                     }
                 });
         }

@@ -220,6 +220,25 @@ describe("GIVEN an observed array", function () {
                 });
             });
         });
+
+        describe.only("WHEN a parent object of the nested property is deleted", function () {
+            beforeEach(function () {
+                delete array[0].nested;
+            });
+
+            it("THEN publishes a delete event", function (done) {
+                asap(function () {
+                    var event = aggregatedEvents[1][0];
+                    expect(event).to.eql({
+                        type: "delete",
+                        object: array,
+                        name: "0.nested.property",
+                        oldValue: true
+                    });
+                    done();
+                });
+            });
+        });
     });
 
     describe("WHEN observing specific indexes only once", function () {
