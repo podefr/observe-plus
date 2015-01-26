@@ -236,11 +236,31 @@ describe("GIVEN an observed object", function () {
 
             it("THEN publishes an update event", function (done) {
                 asap(function () {
-                    var lastEvent = aggregatedEvents[0][0];
-                    expect(lastEvent.name).to.equal("newProperty.nested.property");
-                    expect(lastEvent.object.newProperty.nested.property).to.be.false;
-                    expect(lastEvent.type).to.equal("update");
+                    var firstEvent = aggregatedEvents[0][0];
+                    expect(firstEvent.name).to.equal("newProperty.nested.property");
+                    expect(firstEvent.object.newProperty.nested.property).to.be.false;
+                    expect(firstEvent.type).to.equal("update");
                     done();
+                });
+            });
+
+            describe("WHEN a parent object is replaced and the value of the observed nested property changes", function () {
+                beforeEach(function () {
+                    resetAggregatedEvents();
+                    pojo.newProperty.nested = {
+                        property: true
+                    };
+                });
+
+                it("THEN triggers a new event", function (done) {
+                    asap(function () {
+                        var event = aggregatedEvents[0][0];
+                        expect(event.type).to.equal("update");
+                        expect(event.object).to.equal(pojo);
+                        expect(event.name).to.equal("newProperty.nested.property");
+                        expect(event.oldValue).to.be.false;
+                        done();
+                    });
                 });
             });
         });

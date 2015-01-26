@@ -52,10 +52,12 @@ describe("GIVEN Observe", function () {
                 it("THEN calls the callback", function (done) {
                     asap(function () {
                         expect(callback.calledOnce).to.be.true;
+
                         expect(callback.lastCall.args[0]).to.eql({
                             type: "add",
                             object: observedObject,
-                            name: "newProperty"
+                            name: "newProperty",
+                            oldValue: undefined
                         });
                         done();
                     });
@@ -146,7 +148,8 @@ describe("GIVEN Observe", function () {
                         expect(callback.lastCall.args[0]).to.eql({
                             type: "add",
                             object: observedObject,
-                            name: "newProperty"
+                            name: "newProperty",
+                            oldValue: undefined
                         });
                         done();
                     });

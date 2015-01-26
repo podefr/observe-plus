@@ -17,6 +17,14 @@ function clone(obj) {
     return JSON.parse(JSON.stringify(obj));
 }
 
+function subtractPath(path1, path2) {
+    return path1.split(path2 + ".").join("");
+}
+
+function getValueFromPartialPath(fullPath, partialPath, object) {
+    return nestedProperty.get(object, subtractPath(fullPath, partialPath));
+}
+
 module.exports = function Observe(observedObject, namespace, callbacks, rootObject) {
     var _callbacks = callbacks || {},
         _isPaused = false,
@@ -112,10 +120,12 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
 
                     newEvent = clone(ev);
                     newEvent.object = rootObject || observedObject;
+                    var namespacedName = namespace ? namespace + "." + ev.name : ev.name;
 
                     loop(callbacksForEventType, function (callbacks, property) {
                         if (nestedProperty.isIn(rootObject || observedObject, property, newEvent.object)) {
                             newEvent.name = property;
+                            newEvent.oldValue = getValueFromPartialPath(property, namespacedName, ev.oldValue);
                             callbacks.forEach(executeCallback.bind(null, newEvent));
                         }
                     });
