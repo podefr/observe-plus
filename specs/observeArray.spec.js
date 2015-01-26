@@ -221,7 +221,7 @@ describe("GIVEN an observed array", function () {
             });
         });
 
-        describe.only("WHEN a parent object of the nested property is deleted", function () {
+        describe("WHEN a parent object of the nested property is deleted", function () {
             beforeEach(function () {
                 delete array[0].nested;
             });
