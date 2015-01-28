@@ -14,7 +14,6 @@ var sinon = require("sinon");
 var observeObject = require("../src/observe-plus").observe;
 
 describe("GIVEN an observed object", function () {
-
     var pojo, observer;
 
     beforeEach(function () {
@@ -23,7 +22,6 @@ describe("GIVEN an observed object", function () {
     });
 
     describe("WHEN observing newly added properties", function () {
-
         var dispose, spy;
 
         beforeEach(function () {
