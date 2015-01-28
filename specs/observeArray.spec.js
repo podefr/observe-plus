@@ -162,11 +162,11 @@ describe("GIVEN an observed array", function () {
     });
 
     describe("WHEN observing nested properties", function () {
+        var spy;
+
         beforeEach(function () {
-            resetAggregatedEvents();
-            observer.observeValue("0.nested.property", function (ev) {
-                aggregatedEvents.push([ev]);
-            });
+            spy = sinon.spy();
+            observer.observeValue("0.nested.property", spy);
             array.push({
                 nested: {
                     property: true
@@ -174,10 +174,13 @@ describe("GIVEN an observed array", function () {
             });
         });
 
+        afterEach(function () {
+            spy.reset();
+        });
+
         it("THEN publishes an event with the new value", function (done) {
             asap(function () {
-                var event = aggregatedEvents[0][0];
-                expect(event).to.eql({
+                expect(spy.firstCall.args[0]).to.eql({
                     type: "splice",
                     object: array,
                     index: "0.nested.property",
@@ -195,8 +198,7 @@ describe("GIVEN an observed array", function () {
 
             it("THEN publishes an event with the new value", function (done) {
                 asap(function () {
-                    var event = aggregatedEvents[1][0];
-                    expect(event).to.eql({
+                    expect(spy.secondCall.args[0]).to.eql({
                         type: "update",
                         object: array,
                         name: "0.nested.property",
@@ -214,8 +216,7 @@ describe("GIVEN an observed array", function () {
 
             it("THEN publishes a delete event", function (done) {
                 asap(function () {
-                    var event = aggregatedEvents[1][0];
-                    expect(event).to.eql({
+                    expect(spy.secondCall.args[0]).to.eql({
                         type: "delete",
                         object: array,
                         name: "0.nested.property",
@@ -233,8 +234,9 @@ describe("GIVEN an observed array", function () {
 
             it("THEN publishes a delete event", function (done) {
                 asap(function () {
-                    var event = aggregatedEvents[1][0];
-                    expect(event).to.eql({
+
+                    debugger;
+                    expect(spy.secondCall.args[0]).to.eql({
                         type: "delete",
                         object: array,
                         name: "0.nested.property",
