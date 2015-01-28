@@ -9,6 +9,7 @@
 var chai = require("chai");
 var expect = chai.expect;
 var asap = require("asap");
+var sinon = require("sinon");
 
 var observeArray = require("../src/observe-plus").observe;
 
@@ -28,7 +29,6 @@ describe("GIVEN an observed array", function () {
     });
 
     describe("WHEN observing newly added items", function () {
-
         var dispose;
 
         beforeEach(function () {
@@ -323,6 +323,112 @@ describe("GIVEN an observed array", function () {
                             done();
                         });
                     });
+                });
+            });
+        });
+    });
+});
+
+
+describe.only("GIVEN an array with a nested array ", function () {
+    var array, observer;
+
+    beforeEach(function () {
+        array = [{nested: []}];
+        observer = observeArray(array);
+    });
+
+    describe("WHEN observing splice events", function () {
+        var spy;
+
+        beforeEach(function () {
+            spy = sinon.spy();
+            observer.observe("splice", spy);
+        });
+
+        afterEach(function () {
+            spy.reset();
+        });
+
+        describe("WHEN a value is added to the nested array", function () {
+            beforeEach(function () {
+                array[0].nested.push(1);
+            });
+
+            it("THEN publishes an event", function (done) {
+                asap(function () {
+                    expect(spy.firstCall.args[0]).to.eql({
+                        type: 'splice',
+                        object: array,
+                        index: '0.nested.0',
+                        removed: [],
+                        addedCount: 1
+                    });
+                    done();
+                });
+            });
+        });
+    });
+
+    describe("WHEN observing update events", function () {
+        var spy;
+
+        beforeEach(function () {
+            spy = sinon.spy();
+            observer.observe("update", spy);
+            array[0].nested.push(1);
+        });
+
+        afterEach(function () {
+            spy.reset();
+        });
+
+        describe("WHEN a value in the nested array is updated", function () {
+            beforeEach(function () {
+                array[0].nested[0] = 2
+            });
+
+            it("THEN publishes an event", function (done) {
+                asap(function () {
+                    expect(spy.firstCall.args[0]).to.eql({
+                        type: 'update',
+                        object: array,
+                        name: '0.nested.0',
+                        oldValue: 1
+                    });
+                    done();
+                });
+            });
+        });
+    });
+
+    describe("WHEN observing update events", function () {
+        var spy;
+
+        beforeEach(function () {
+            spy = sinon.spy();
+            observer.observe("update", spy);
+            array[0].nested.push(1);
+        });
+
+        afterEach(function () {
+            spy.reset();
+        });
+
+        describe("WHEN the nested array is updated", function () {
+            beforeEach(function () {
+                array[0].nested = [];
+            });
+
+            it("THEN publishes an event", function (done) {
+                asap(function () {
+                    expect(spy.firstCall.args[0]).to.eql({
+                        type: 'update',
+                        object: array,
+                        name: '0.nested',
+                        oldValue: [1]
+                    });
+                    done();
                 });
             });
         });

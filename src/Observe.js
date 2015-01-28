@@ -145,8 +145,18 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                     });
 
                 } else {
+
+                    newEvent = clone(ev);
+                    newEvent.object = rootObject || observedObject;
+
+                    if (newEvent.hasOwnProperty("name")) {
+                        newEvent.name = namespace ? namespace + "." + ev.name : ev.name;
+                    } else {
+                        newEvent.index = namespace ? namespace + "." + ev.index : ev.index;
+                    }
+
                     if (callbacksForEventType && callbacksForEventType[eventPropertyName]) {
-                        callbacksForEventType[eventPropertyName].forEach(executeCallback.bind(null, ev));
+                        callbacksForEventType[eventPropertyName].forEach(executeCallback.bind(null, newEvent));
                     }
                 }
 
@@ -160,7 +170,7 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
         if (isValidValueToObserve(value)) {
             newNamespace = namespace ? namespace + "." + key : key;
 
-            new Observe(value, newNamespace, _callbacks, rootObject || observedObject);
+            new Observe(value, newNamespace + "", _callbacks, rootObject || observedObject);
         }
     });
 
@@ -171,8 +181,7 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
 
         if (isValidValueToObserve(value)) {
             newNamespace = namespace ? namespace + "." + key : key;
-
-            new Observe(value, newNamespace, _callbacks, rootObject || observedObject);
+            new Observe(value, newNamespace + "", _callbacks, rootObject || observedObject);
         }
     });
 
@@ -184,7 +193,6 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                     if (isValidValueToObserve(value)) {
                         var offsettedIndex = index + event.index;
                         var newNamespace = namespace ? namespace + "." + offsetedIndex : offsettedIndex;
-
                         new Observe(value, newNamespace + "", _callbacks, rootObject || observedObject);
                     }
                 });
