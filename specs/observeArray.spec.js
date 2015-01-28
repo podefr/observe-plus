@@ -15,11 +15,7 @@ var observeArray = require("../src/observe-plus").observe;
 
 describe("GIVEN an observed array", function () {
 
-    var array, observer, aggregatedEvents;
-
-    function resetAggregatedEvents() {
-        aggregatedEvents = [];
-    }
+    var array, observer;
 
     beforeEach(function () {
         array = [];
@@ -234,8 +230,6 @@ describe("GIVEN an observed array", function () {
 
             it("THEN publishes a delete event", function (done) {
                 asap(function () {
-
-                    debugger;
                     expect(spy.secondCall.args[0]).to.eql({
                         type: "delete",
                         object: array,
@@ -249,23 +243,24 @@ describe("GIVEN an observed array", function () {
     });
 
     describe("WHEN observing specific indexes only once", function () {
-        var dispose;
+        var dispose, spy;
 
         beforeEach(function () {
-            resetAggregatedEvents();
-            dispose = observer.observeValueOnce(0, function (ev) {
-                aggregatedEvents.push([ev]);
-            });
+            spy = sinon.spy();
+            dispose = observer.observeValueOnce(0, spy);
             array.push("value");
             array[0] = "newValue";
         });
 
         it("THEN the observer is called", function (done) {
             asap(function () {
-                var firstEvent = aggregatedEvents[0][0];
-                expect(firstEvent.type).to.equal("splice");
-                expect(firstEvent.index).to.equal("0");
-                expect(firstEvent.object[0]).to.equal("newValue");
+                expect(spy.firstCall.args[0]).to.eql({
+                    type: "splice",
+                    index: "0",
+                    object: ["newValue"],
+                    removed: [],
+                    addedCount: 1
+                });
                 done();
             });
         });
