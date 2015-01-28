@@ -9,6 +9,7 @@
 var chai = require("chai");
 var expect = chai.expect;
 var asap = require("asap");
+var sinon = require("sinon");
 
 var observeObject = require("../src/observe-plus").observe;
 
@@ -29,18 +30,21 @@ describe("GIVEN an observed object", function () {
 
     describe("WHEN observing newly added properties", function () {
 
-        var dispose;
+        var dispose, spy;
 
         beforeEach(function () {
             resetAggregatedEvents();
-            dispose = observer.observe("add", function (ev) {
-                aggregatedEvents.push([ev, "observer1"]);
-            });
+            spy = sinon.spy();
+            dispose = observer.observe("add", spy);
+        });
+
+        afterEach(function () {
+            spy.reset();
         });
 
         it("THEN shouldn't publish any event before a new property is added", function (done) {
             asap(function () {
-                expect(aggregatedEvents.length).to.equal(0);
+                expect(spy.callCount).to.equal(0);
                 done();
             });
         });
@@ -52,20 +56,18 @@ describe("GIVEN an observed object", function () {
 
             it("THEN should publish a new event", function (done) {
                 asap(function () {
-                    var firstEvent = aggregatedEvents[0][0],
-                        observerName = aggregatedEvents[0][1];
-
-                    expect(firstEvent.type).to.equal("add");
-                    expect(firstEvent.name).to.equal("newProperty");
-                    expect(firstEvent.object.newProperty).to.equal("newValue");
-                    expect(observerName).to.equal("observer1");
+                    expect(spy.firstCall.args[0]).to.eql({
+                        type: "add",
+                        name: "newProperty",
+                        object: pojo
+                    });
                     done();
                 });
             });
 
             it("THEN only published one event", function (done) {
                 asap(function () {
-                    expect(aggregatedEvents.length).to.equal(1);
+                    expect(spy.callCount).to.equal(1);
                     done();
                 });
             });
@@ -80,7 +82,7 @@ describe("GIVEN an observed object", function () {
 
                 it("THEN doesn't publish events anymore", function (done) {
                     asap(function () {
-                        expect(aggregatedEvents.length).to.equal(0);
+                        expect(spy.callCount).to.equal(1);
                         done();
                     });
                 });
@@ -89,20 +91,18 @@ describe("GIVEN an observed object", function () {
             describe("WHEN the property is modified", function () {
                 beforeEach(function () {
                     resetAggregatedEvents();
-                    observer.observe("update", function (ev) {
-                        aggregatedEvents.push([ev]);
-                    });
+                    observer.observe("update", spy);
                     pojo.newProperty = "updatedValue";
                 });
 
                 it("THEN calls the observer with the updated event", function (done) {
                     asap(function () {
-                        var firstEvent = aggregatedEvents[0][0];
-
-                        expect(firstEvent.type).to.equal("update");
-                        expect(firstEvent.name).to.equal("newProperty");
-                        expect(firstEvent.object.newProperty).to.equal("updatedValue");
-                        expect(firstEvent.oldValue).to.equal("newValue");
+                        expect(spy.secondCall.args[0]).to.eql({
+                            type: "update",
+                            name: "newProperty",
+                            object: pojo,
+                            oldValue: "newValue"
+                        });
                         done();
                     });
                 });
@@ -111,19 +111,18 @@ describe("GIVEN an observed object", function () {
             describe("WHEN the property is deleted", function () {
                 beforeEach(function () {
                     resetAggregatedEvents();
-                    observer.observe("delete", function (ev) {
-                        aggregatedEvents.push([ev]);
-                    });
+                    observer.observe("delete", spy);
                     delete pojo.newProperty;
                 });
 
                 it("THEN calls the observer with undefined and the old value", function (done) {
                     asap(function () {
-                        var firstEvent = aggregatedEvents[0][0];
-
-                        expect(firstEvent.name).to.equal("newProperty");
-                        expect(firstEvent.object.newProperty).to.be.undefined;
-                        expect(firstEvent.oldValue).to.equal("newValue");
+                        expect(spy.secondCall.args[0]).to.eql({
+                            type: "delete",
+                            name: "newProperty",
+                            object: pojo,
+                            oldValue: "newValue"
+                        });
                         done();
                     });
                 });
@@ -135,9 +134,7 @@ describe("GIVEN an observed object", function () {
 
             beforeEach(function () {
                 resetAggregatedEvents();
-                dispose2 = observer.observe("add", function (ev) {
-                    aggregatedEvents.push([ev, "observer2"]);
-                });
+                dispose2 = observer.observe("add", spy);
             });
 
             describe("WHEN an observer is disposed of", function () {
@@ -155,11 +152,7 @@ describe("GIVEN an observed object", function () {
 
                     it("THEN doesn't call the disposed observer anymore", function (done) {
                         asap(function () {
-                            var numberOfCallbacksCalled = aggregatedEvents.length,
-                                firstObserverName = aggregatedEvents[0][1];
-
-                            expect(numberOfCallbacksCalled).to.equal(1);
-                            expect(firstObserverName).to.equal("observer2");
+                            expect(spy.callCount).to.equal(1);
 
                             done();
                         });
@@ -185,33 +178,35 @@ describe("GIVEN an observed object", function () {
     });
 
     describe("WHEN observing specific properties", function () {
-        var dispose;
+        var dispose, spy;
 
         beforeEach(function () {
             resetAggregatedEvents();
-            dispose = observer.observeValue("newProperty", function (ev) {
-                aggregatedEvents.push([ev]);
-            });
+            spy = sinon.spy();
+            dispose = observer.observeValue("newProperty", spy);
             pojo.newProperty = "newValue";
         });
 
         it("THEN publishes an event with the new value and the old value", function (done) {
             asap(function () {
-                var firstEvent = aggregatedEvents[0][0];
-                expect(firstEvent.name).to.equal("newProperty");
-                expect(firstEvent.object.newProperty).to.equal("newValue");
-                expect(firstEvent.oldValue).to.be.undefined;
+                expect(spy.firstCall.args[0]).to.eql({
+                    type: "add",
+                    name: "newProperty",
+                    object: pojo,
+                    oldValue: undefined
+                });
                 done();
             });
         });
     });
 
     describe("WHEN observing nested properties", function () {
+        var spy;
+
         beforeEach(function () {
+            spy = sinon.spy();
             resetAggregatedEvents();
-            observer.observeValue("newProperty.nested.property", function (ev) {
-                aggregatedEvents.push([ev]);
-            });
+            observer.observeValue("newProperty.nested.property", spy);
             pojo.newProperty = {
                 nested: {
                     property: true
@@ -221,9 +216,12 @@ describe("GIVEN an observed object", function () {
 
         it("Then publishes an event", function (done) {
              asap(function () {
-                var firstEvent = aggregatedEvents[0][0];
-                 expect(firstEvent.name).to.equal("newProperty.nested.property");
-                 expect(firstEvent.object.newProperty.nested.property).to.be.true;
+                 expect(spy.firstCall.args[0]).to.eql({
+                     type: "add",
+                     object: pojo,
+                     name: "newProperty.nested.property",
+                     oldValue: undefined
+                 });
                  done();
              });
         });
@@ -236,10 +234,12 @@ describe("GIVEN an observed object", function () {
 
             it("THEN publishes an update event", function (done) {
                 asap(function () {
-                    var firstEvent = aggregatedEvents[0][0];
-                    expect(firstEvent.name).to.equal("newProperty.nested.property");
-                    expect(firstEvent.object.newProperty.nested.property).to.be.false;
-                    expect(firstEvent.type).to.equal("update");
+                    expect(spy.secondCall.args[0]).to.eql({
+                        type: "update",
+                        object: pojo,
+                        name: "newProperty.nested.property",
+                        oldValue: true
+                    });
                     done();
                 });
             });
@@ -254,11 +254,12 @@ describe("GIVEN an observed object", function () {
 
                 it("THEN triggers a new event", function (done) {
                     asap(function () {
-                        var event = aggregatedEvents[0][0];
-                        expect(event.type).to.equal("update");
-                        expect(event.object).to.equal(pojo);
-                        expect(event.name).to.equal("newProperty.nested.property");
-                        expect(event.oldValue).to.be.false;
+                        expect(spy.secondCall.args[0]).to.eql({
+                            type: "update",
+                            object: pojo,
+                            name: "newProperty.nested.property",
+                            oldValue: true
+                        });
                         done();
                     });
                 });
@@ -274,7 +275,7 @@ describe("GIVEN an observed object", function () {
 
                 it("THEN doesn't trigger an event", function (done) {
                     asap(function () {
-                        expect(aggregatedEvents[0]).to.be.undefined;
+                        expect(spy.callCount).to.equal(2);
                         done();
                     });
                 });
@@ -289,8 +290,7 @@ describe("GIVEN an observed object", function () {
 
             it("THEN publishes a delete event", function (done) {
                 asap(function () {
-                    var firstEvent = aggregatedEvents[0][0];
-                    expect(firstEvent).to.eql({
+                    expect(spy.secondCall.args[0]).to.eql({
                         type: "delete",
                         name: "newProperty.nested.property",
                         object: pojo,
@@ -309,8 +309,7 @@ describe("GIVEN an observed object", function () {
 
             it("THEN publishes a delete event", function (done) {
                 asap(function () {
-                    var firstEvent = aggregatedEvents[0][0];
-                    expect(firstEvent).to.eql({
+                    expect(spy.secondCall.args[0]).to.eql({
                         type: "delete",
                         name: "newProperty.nested.property",
                         object: pojo,
