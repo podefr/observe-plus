@@ -29,10 +29,6 @@ describe("GIVEN an observed object", function () {
             dispose = observer.observe("add", spy);
         });
 
-        afterEach(function () {
-            spy.reset();
-        });
-
         it("THEN shouldn't publish any event before a new property is added", function (done) {
             asap(function () {
                 expect(spy.callCount).to.equal(0);
@@ -306,10 +302,6 @@ describe("GIVEN an observed object", function () {
         beforeEach(function () {
             spy = sinon.spy();
             dispose = observer.observeOnce("add", spy);
-        });
-
-        afterEach(function () {
-            spy.reset();
         });
 
         describe("WHEN the property is added", function () {

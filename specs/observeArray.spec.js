@@ -30,10 +30,6 @@ describe("GIVEN an observed array", function () {
             dispose = observer.observe("splice", spy);
         });
 
-        afterEach(function () {
-            spy.reset();
-        });
-
         it("THEN shouldn't publish any event before a new item is added", function (done) {
             asap(function () {
                 expect(spy.called).to.be.false;
@@ -132,10 +128,6 @@ describe("GIVEN an observed array", function () {
             array[0] = "newValue";
         });
 
-        afterEach(function () {
-            sinon.spy();
-        });
-
         it("THEN publishes an event with the new value and a new event with the old value", function (done) {
             asap(function () {
                 expect(spy.firstCall.args[0]).to.eql({
@@ -168,10 +160,6 @@ describe("GIVEN an observed array", function () {
                     property: true
                 }
             });
-        });
-
-        afterEach(function () {
-            spy.reset();
         });
 
         it("THEN publishes an event with the new value", function (done) {
@@ -346,10 +334,6 @@ describe("GIVEN an array with a nested array ", function () {
             observer.observe("splice", spy);
         });
 
-        afterEach(function () {
-            spy.reset();
-        });
-
         describe("WHEN a value is added to the nested array", function () {
             beforeEach(function () {
                 array[0].nested.push(1);
@@ -379,10 +363,6 @@ describe("GIVEN an array with a nested array ", function () {
             array[0].nested.push(1);
         });
 
-        afterEach(function () {
-            spy.reset();
-        });
-
         describe("WHEN a value in the nested array is updated", function () {
             beforeEach(function () {
                 array[0].nested[0] = 2
@@ -409,10 +389,6 @@ describe("GIVEN an array with a nested array ", function () {
             spy = sinon.spy();
             observer.observe("update", spy);
             array[0].nested.push(1);
-        });
-
-        afterEach(function () {
-            spy.reset();
         });
 
         describe("WHEN the nested array is updated", function () {
