@@ -15,13 +15,7 @@ var observeObject = require("../src/observe-plus").observe;
 
 describe("GIVEN an observed object", function () {
 
-    var pojo,
-        observer,
-        aggregatedEvents;
-
-    function resetAggregatedEvents() {
-        aggregatedEvents = [];
-    }
+    var pojo, observer;
 
     beforeEach(function () {
         pojo = {};
@@ -33,7 +27,6 @@ describe("GIVEN an observed object", function () {
         var dispose, spy;
 
         beforeEach(function () {
-            resetAggregatedEvents();
             spy = sinon.spy();
             dispose = observer.observe("add", spy);
         });
@@ -74,7 +67,6 @@ describe("GIVEN an observed object", function () {
 
             describe("WHEN destroying", function () {
                 beforeEach(function () {
-                    resetAggregatedEvents();
                     observer.destroy();
 
                     pojo.anotherProperty = "value";
@@ -90,7 +82,6 @@ describe("GIVEN an observed object", function () {
 
             describe("WHEN the property is modified", function () {
                 beforeEach(function () {
-                    resetAggregatedEvents();
                     observer.observe("update", spy);
                     pojo.newProperty = "updatedValue";
                 });
@@ -110,7 +101,6 @@ describe("GIVEN an observed object", function () {
 
             describe("WHEN the property is deleted", function () {
                 beforeEach(function () {
-                    resetAggregatedEvents();
                     observer.observe("delete", spy);
                     delete pojo.newProperty;
                 });
@@ -133,7 +123,6 @@ describe("GIVEN an observed object", function () {
             var dispose2;
 
             beforeEach(function () {
-                resetAggregatedEvents();
                 dispose2 = observer.observe("add", spy);
             });
 
@@ -146,7 +135,6 @@ describe("GIVEN an observed object", function () {
 
                 describe("WHEN a new property is added", function () {
                     beforeEach(function () {
-                        resetAggregatedEvents();
                         pojo.newProperty = {};
                     });
 
@@ -181,7 +169,6 @@ describe("GIVEN an observed object", function () {
         var dispose, spy;
 
         beforeEach(function () {
-            resetAggregatedEvents();
             spy = sinon.spy();
             dispose = observer.observeValue("newProperty", spy);
             pojo.newProperty = "newValue";
@@ -205,7 +192,6 @@ describe("GIVEN an observed object", function () {
 
         beforeEach(function () {
             spy = sinon.spy();
-            resetAggregatedEvents();
             observer.observeValue("newProperty.nested.property", spy);
             pojo.newProperty = {
                 nested: {
@@ -228,7 +214,6 @@ describe("GIVEN an observed object", function () {
 
         describe("WHEN the nested property is modified", function () {
             beforeEach(function () {
-                resetAggregatedEvents();
                 pojo.newProperty.nested.property = false;
             });
 
@@ -246,7 +231,6 @@ describe("GIVEN an observed object", function () {
 
             describe("WHEN a parent object is replaced and the value of the observed nested property changes", function () {
                 beforeEach(function () {
-                    resetAggregatedEvents();
                     pojo.newProperty.nested = {
                         property: true
                     };
@@ -267,7 +251,6 @@ describe("GIVEN an observed object", function () {
 
             describe("WHEN a parent object is replaced and the value of the observed nested property doesn't change", function () {
                 beforeEach(function () {
-                    resetAggregatedEvents();
                     pojo.newProperty.nested = {
                         property: false
                     };
@@ -284,7 +267,6 @@ describe("GIVEN an observed object", function () {
 
         describe("WHEN the nested property is deleted ", function () {
             beforeEach(function () {
-                resetAggregatedEvents();
                 delete pojo.newProperty.nested;
             });
 
@@ -303,7 +285,6 @@ describe("GIVEN an observed object", function () {
 
         describe("WHEN a parent object of a nested property is deleted", function () {
             beforeEach(function () {
-                resetAggregatedEvents();
                 delete pojo.newProperty;
             });
 
@@ -325,7 +306,6 @@ describe("GIVEN an observed object", function () {
         var dispose, spy;
 
         beforeEach(function () {
-            resetAggregatedEvents();
             spy = sinon.spy();
             dispose = observer.observeOnce("add", spy);
         });
@@ -363,7 +343,6 @@ describe("GIVEN an observed object", function () {
         var dispose, spy;
 
         beforeEach(function () {
-            resetAggregatedEvents();
             spy = sinon.spy();
             dispose = observer.observeValueOnce("newProperty", spy);
             pojo.newProperty = "value";
@@ -400,7 +379,6 @@ describe("GIVEN an observed object", function () {
 
         describe("WHEN a property changes", function () {
             beforeEach(function () {
-                resetAggregatedEvents();
                 pojo.newProperty = "value";
                 pojo.newProperty = "newValue";
                 delete pojo.newProperty;
@@ -429,7 +407,6 @@ describe("GIVEN an observed object", function () {
 
                 describe("WHEN the updates are paused and resumed again", function () {
                     beforeEach(function () {
-                        resetAggregatedEvents();
                         observer.pause();
                         pojo.newProperty = "lastValue";
                         observer.resume();
