@@ -279,23 +279,24 @@ describe("GIVEN an observed array", function () {
     });
 
     describe("WHEN pausing the updates", function () {
+        var spy;
+
         beforeEach(function () {
-            observer.observe("splice", function (ev) {
-                aggregatedEvents.push([ev]);
-            });
+            spy = sinon.spy();
+
+            observer.observe("splice", spy);
             observer.pause();
         });
 
         describe("WHEN a property changes", function () {
             beforeEach(function () {
-                resetAggregatedEvents();
                 array.push("value");
                 array.pop();
             });
 
             it("THEN the observers aren't called", function (done) {
                 asap(function () {
-                    expect(aggregatedEvents.length).to.equal(0);
+                    expect(spy.called).to.be.false;
                     done();
                 });
             });
@@ -307,18 +308,15 @@ describe("GIVEN an observed array", function () {
 
                 it("THEN calls all the observers in order", function (done) {
                     asap(function () {
-                        var firstEvent = aggregatedEvents[0][0],
-                            secondEvent = aggregatedEvents[1][0];
-
-                        expect(firstEvent.addedCount).to.equal(1);
-                        expect(secondEvent.removed.length).to.equal(1);
+                        expect(spy.firstCall.args[0].addedCount).to.equal(1);
+                        expect(spy.secondCall.args[0].removed.length).to.equal(1);
                         done();
                     });
                 });
 
                 describe("WHEN the updates are paused and resumed again", function () {
                     beforeEach(function () {
-                        resetAggregatedEvents();
+                        spy.reset();
                         observer.pause();
                         array.push("lastValue");
                         observer.resume();
@@ -326,7 +324,7 @@ describe("GIVEN an observed array", function () {
 
                     it("THEN only publishes the new event", function (done) {
                         asap(function () {
-                            expect(aggregatedEvents.length).to.equal(1);
+                            expect(spy.callCount).to.equal(1);
                             done();
                         });
                     });
