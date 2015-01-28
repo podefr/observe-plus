@@ -102,11 +102,11 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
 
     function publishEvents(events) {
         events.forEach(function (ev) {
-            function executeCallback(newEvent, callbackArray) {
+            function executeCallback(newEvent, ev, callbackArray) {
                 var callback = callbackArray[0],
                     thisObj = callbackArray[1];
                 try {
-                    callback.call(thisObj, newEvent);
+                    callback.call(thisObj, newEvent, ev);
                 } catch (err) {
                 }
             }
@@ -135,12 +135,13 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                             }
                             if (newEvent.hasOwnProperty("name")) {
                                 newEvent.name = property;
+                                newEvent.oldValue = getValueFromPartialPath(property, namespacedName, ev.oldValue);
                             } else {
                                 newEvent.index = property;
+
                             }
 
-                            newEvent.oldValue = getValueFromPartialPath(property, namespacedName, ev.oldValue);
-                            callbacks.forEach(executeCallback.bind(null, newEvent));
+                            callbacks.forEach(executeCallback.bind(null, newEvent, ev));
                         }
                     });
 
@@ -156,7 +157,7 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                     }
 
                     if (callbacksForEventType && callbacksForEventType[eventPropertyName]) {
-                        callbacksForEventType[eventPropertyName].forEach(executeCallback.bind(null, newEvent));
+                        callbacksForEventType[eventPropertyName].forEach(executeCallback.bind(null, newEvent, ev));
                     }
                 }
 

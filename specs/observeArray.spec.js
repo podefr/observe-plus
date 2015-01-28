@@ -15,9 +15,7 @@ var observeArray = require("../src/observe-plus").observe;
 
 describe("GIVEN an observed array", function () {
 
-    var array,
-        observer,
-        aggregatedEvents;
+    var array, observer, aggregatedEvents;
 
     function resetAggregatedEvents() {
         aggregatedEvents = [];
@@ -29,18 +27,20 @@ describe("GIVEN an observed array", function () {
     });
 
     describe("WHEN observing newly added items", function () {
-        var dispose;
+        var dispose, spy;
 
         beforeEach(function () {
-            resetAggregatedEvents();
-            dispose = observer.observe("splice", function (ev) {
-                aggregatedEvents.push([ev, "observer1"]);
-            });
+            spy = sinon.spy();
+            dispose = observer.observe("splice", spy);
+        });
+
+        afterEach(function () {
+            spy.reset();
         });
 
         it("THEN shouldn't publish any event before a new item is added", function (done) {
             asap(function () {
-                expect(aggregatedEvents.length).to.equal(0);
+                expect(spy.called).to.be.false;
                 done();
             });
         });
@@ -52,27 +52,26 @@ describe("GIVEN an observed array", function () {
 
             it("THEN should publish a splice event", function (done) {
                 asap(function () {
-                    var firstEvent = aggregatedEvents[0][0],
-                        observerName = aggregatedEvents[0][1];
-
-                    expect(firstEvent.index).to.equal(0);
-                    expect(firstEvent.type).to.equal("splice");
-                    expect(firstEvent.object[0]).to.equal("newItem");
-                    expect(observerName).to.equal("observer1");
+                    expect(spy.lastCall.args[0]).to.eql({
+                        type: 'splice',
+                        object: ['newItem'],
+                        index: 0,
+                        removed: [],
+                        addedCount: 1
+                    });
                     done();
                 });
             });
 
             it("THEN published only one event", function (done) {
                 asap(function () {
-                    expect(aggregatedEvents.length).to.equal(1);
+                    expect(spy.callCount).to.equal(1);
                     done();
                 });
             });
 
             describe("WHEN destroying", function () {
                 beforeEach(function () {
-                    resetAggregatedEvents();
                     observer.destroy();
 
                     array.push("value");
@@ -80,7 +79,7 @@ describe("GIVEN an observed array", function () {
 
                 it("THEN doesn't publish events anymore", function (done) {
                     asap(function () {
-                        expect(aggregatedEvents.length).to.equal(0);
+                        expect(spy.callCount).to.equal(1);
                         done();
                     });
                 });
@@ -88,19 +87,18 @@ describe("GIVEN an observed array", function () {
 
             describe("WHEN the item is modified", function () {
                 beforeEach(function () {
-                    resetAggregatedEvents();
-                    observer.observe("update", function (ev) {
-                        aggregatedEvents.push([ev]);
-                    });
+                    observer.observe("update", spy);
                     array[0] = "updatedItem";
                 });
 
                 it("THEN calls the observer with the updated event", function (done) {
                     asap(function () {
-                        var firstEvent = aggregatedEvents[0][0];
-
-                        expect(firstEvent.type).to.equal("update");
-                        expect(firstEvent.object[0]).to.equal("updatedItem");
+                        expect(spy.lastCall.args[0]).to.eql({
+                            type: "update",
+                            object: ["updatedItem"],
+                            name: "0",
+                            oldValue: "newItem"
+                        });
                         done();
                     });
                 });
@@ -108,19 +106,19 @@ describe("GIVEN an observed array", function () {
 
             describe("WHEN the property is deleted", function () {
                 beforeEach(function () {
-                    resetAggregatedEvents();
-                    observer.observe("splice", function (ev) {
-                        aggregatedEvents.push([ev]);
-                    });
+                    observer.observe("splice", spy);
                     array.pop();
                 });
 
                 it("THEN calls the observer with the splice event", function (done) {
                     asap(function () {
-                        var firstEvent = aggregatedEvents[0][0];
-
-                        expect(firstEvent.type).to.equal("splice");
-                        expect(firstEvent.object.length).to.equal(0);
+                        expect(spy.lastCall.args[0]).to.eql({
+                            type: "splice",
+                            object: [],
+                            index: 0,
+                            removed: ["newItem"],
+                            addedCount: 0
+                        });
                         done();
                     });
                 });
@@ -129,27 +127,35 @@ describe("GIVEN an observed array", function () {
     });
 
     describe("WHEN observing specific indexes", function () {
+        var spy;
+
         beforeEach(function () {
-            resetAggregatedEvents();
-            observer.observeValue(0, function (ev) {
-                aggregatedEvents.push([ev]);
-            });
+            spy = sinon.spy();
+            observer.observeValue(0, spy);
             array.push("value");
             array[0] = "newValue";
         });
 
+        afterEach(function () {
+            sinon.spy();
+        });
+
         it("THEN publishes an event with the new value and a new event with the old value", function (done) {
             asap(function () {
-                var firstEvent = aggregatedEvents[0][0];
-                expect(firstEvent.type).to.equal("splice");
-                expect(firstEvent.index).to.equal("0");
-                expect(firstEvent.object[0]).to.equal("newValue");
+                expect(spy.firstCall.args[0]).to.eql({
+                    type: "splice",
+                    object: ["newValue"],
+                    index: "0",
+                    removed: [],
+                    addedCount: 1
+                });
 
-                var lastEvent = aggregatedEvents[1][0];
-                expect(lastEvent.type).to.equal("update");
-                expect(lastEvent.name).to.equal("0");
-                expect(lastEvent.object[0]).to.equal("newValue");
-                expect(lastEvent.oldValue).to.equal("value");
+                expect(spy.lastCall.args[0]).to.eql({
+                    type: "update",
+                    name: "0",
+                    object: ["newValue"],
+                    oldValue: "value"
+                });
                 done();
             });
         });
@@ -176,8 +182,7 @@ describe("GIVEN an observed array", function () {
                     object: array,
                     index: "0.nested.property",
                     removed: [],
-                    addedCount: 1,
-                    oldValue: undefined
+                    addedCount: 1
                 });
                 done();
             });
@@ -330,7 +335,7 @@ describe("GIVEN an observed array", function () {
 });
 
 
-describe.only("GIVEN an array with a nested array ", function () {
+describe("GIVEN an array with a nested array ", function () {
     var array, observer;
 
     beforeEach(function () {
