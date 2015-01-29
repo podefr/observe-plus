@@ -56,8 +56,7 @@ describe("GIVEN Observe", function () {
                         expect(callback.lastCall.args[0]).to.eql({
                             type: "add",
                             object: observedObject,
-                            name: "newProperty",
-                            oldValue: undefined
+                            name: "newProperty"
                         });
                         done();
                     });
@@ -148,8 +147,7 @@ describe("GIVEN Observe", function () {
                         expect(callback.lastCall.args[0]).to.eql({
                             type: "add",
                             object: observedObject,
-                            name: "newProperty",
-                            oldValue: undefined
+                            name: "newProperty"
                         });
                         done();
                     });

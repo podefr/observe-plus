@@ -173,8 +173,7 @@ describe("GIVEN an observed object", function () {
                 expect(spy.firstCall.args[0]).to.eql({
                     type: "add",
                     name: "newProperty",
-                    object: pojo,
-                    oldValue: undefined
+                    object: pojo
                 });
                 done();
             });
@@ -199,8 +198,7 @@ describe("GIVEN an observed object", function () {
                  expect(spy.firstCall.args[0]).to.eql({
                      type: "add",
                      object: pojo,
-                     name: "newProperty.nested.property",
-                     oldValue: undefined
+                     name: "newProperty.nested.property"
                  });
                  done();
              });
@@ -343,8 +341,7 @@ describe("GIVEN an observed object", function () {
                 expect(spy.firstCall.args[0]).to.eql({
                     type: "add",
                     object: pojo,
-                    name: "newProperty",
-                    oldValue: undefined
+                    name: "newProperty"
                 });
                 done();
             });

@@ -135,7 +135,9 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                             }
                             if (newEvent.hasOwnProperty("name")) {
                                 newEvent.name = property;
-                                newEvent.oldValue = getValueFromPartialPath(property, namespacedName, ev.oldValue);
+                                if (newEvent.type !== "add") {
+                                    newEvent.oldValue = getValueFromPartialPath(property, namespacedName, ev.oldValue);
+                                }
                             } else {
                                 newEvent.index = property;
 
