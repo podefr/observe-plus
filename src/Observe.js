@@ -146,7 +146,6 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                     });
 
                 } else {
-
                     newEvent = clone(ev);
                     newEvent.object = rootObject || observedObject;
 
