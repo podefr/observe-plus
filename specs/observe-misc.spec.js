@@ -39,7 +39,7 @@ describe("GIVEN an observed array", function () {
                     expect(spy.firstCall.args[0]).to.eql({
                         type: "splice",
                         object: array,
-                        index: 0,
+                        index: "0",
                         removed: [],
                         addedCount: 2
                     });

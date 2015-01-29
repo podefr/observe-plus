@@ -206,7 +206,7 @@ describe("GIVEN Observe", function () {
                 expect(callback.lastCall.args[0]).to.eql({
                     type: "splice",
                     object: observedArray,
-                    index: 1,
+                    index: "1",
                     removed: [2],
                     addedCount: 0
                 });

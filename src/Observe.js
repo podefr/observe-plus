@@ -120,11 +120,11 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
         }
     }
 
-    function executeCallback(newEvent, callbackArray) {
+    function executeCallback(newEvent, originalEvent, callbackArray) {
         var callback = callbackArray[0],
             thisObj = callbackArray[1];
         try {
-            callback.call(thisObj, newEvent);
+            callback.call(thisObj, newEvent, originalEvent);
         } catch (err) {
         }
     }
@@ -152,9 +152,9 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
             newEvent.object = rootObject || observedObject;
 
             if (ev.hasOwnProperty("name")) {
-                namespacedName = namespace ? namespace + "." + ev.name : ev.name;
+                namespacedName = createNamespace(namespace, ev.name);
             } else {
-                namespacedName = namespace ? namespace + "." + ev.index : ev.index;
+                namespacedName = createNamespace(namespace, ev.index);
             }
 
             loop(_callbacks[eventType], function (callbacks, property) {
@@ -173,7 +173,7 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
 
                     }
 
-                    callbacks.forEach(executeCallback.bind(null, newEvent));
+                    callbacks.forEach(executeCallback.bind(null, newEvent, ev));
                 }
             });
         },
@@ -182,13 +182,13 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
             newEvent.object = rootObject || observedObject;
 
             if (newEvent.hasOwnProperty("name")) {
-                newEvent.name = namespace ? namespace + "." + ev.name : ev.name;
+                newEvent.name = createNamespace(namespace, ev.name);
             } else {
-                newEvent.index = namespace ? namespace + "." + ev.index : ev.index;
+                newEvent.index = createNamespace(namespace, ev.index);
             }
 
             if (_callbacks[eventType] && _callbacks[eventType][ev[eventType]]) {
-                _callbacks[eventType][ev[eventType]].forEach(executeCallback.bind(null, newEvent));
+                _callbacks[eventType][ev[eventType]].forEach(executeCallback.bind(null, newEvent, ev));
             }
         }
     };
@@ -223,9 +223,9 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
         var newNamespace;
 
         if (isValidValueToObserve(value)) {
-            newNamespace = namespace ? namespace + "." + key : key;
+            newNamespace = createNamespace(namespace, key);
 
-            new Observe(value, newNamespace + "", _callbacks, rootObject || observedObject);
+            new Observe(value, newNamespace, _callbacks, rootObject || observedObject);
         }
     });
 
@@ -236,26 +236,33 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
             newNamespace;
 
         if (isValidValueToObserve(value)) {
-            newNamespace = namespace ? namespace + "." + key : key;
-            new Observe(value, newNamespace + "", _callbacks, rootObject || observedObject);
+            newNamespace = createNamespace(namespace, key);
+            new Observe(value, newNamespace, _callbacks, rootObject || observedObject);
         }
     });
 
     // Same, but if a new item is added to an array
-    this.addListener("type", "splice", function (event) {
+    this.addListener("type", "splice", function (event, originalEvent) {
         if (event.addedCount > 0) {
             event.object
-                .slice(event.index, event.addedCount)
+                .slice(originalEvent.index, event.addedCount)
                 .forEach(function (value, index) {
                     if (isValidValueToObserve(value)) {
-                        var offsettedIndex = index + event.index;
-                        var newNamespace = namespace ? namespace + "." + offsetedIndex : offsettedIndex;
-                        new Observe(value, newNamespace + "", _callbacks, rootObject || observedObject);
+                        debugger;
+                        var newNamespace = createNamespace(namespace, originalEvent.index + index);
+                        new Observe(value, newNamespace, _callbacks, rootObject || observedObject);
                     }
                 });
         }
     });
 };
+
+function createNamespace(namespace, key) {
+    // the double quotes at the end are to ensure that the returned value is always a string.
+    // if key was a number, it wouldn't be a string, and if it was 0, the created namespace would
+    // be falsy.
+    return namespace ? namespace + "." + key : key + "";
+}
 
 function isValidValueToObserve(val) {
     return val !== null && typeof val == "object";
