@@ -102,7 +102,7 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
 
     function publishEvents(events) {
         events.forEach(function (ev) {
-            function executeCallback(newEvent, ev, callbackArray) {
+            function executeCallback(newEvent, callbackArray) {
                 var callback = callbackArray[0],
                     thisObj = callbackArray[1];
                 try {
@@ -143,7 +143,7 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
 
                             }
 
-                            callbacks.forEach(executeCallback.bind(null, newEvent, ev));
+                            callbacks.forEach(executeCallback.bind(null, newEvent));
                         }
                     });
 
@@ -158,7 +158,7 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                     }
 
                     if (callbacksForEventType && callbacksForEventType[eventPropertyName]) {
-                        callbacksForEventType[eventPropertyName].forEach(executeCallback.bind(null, newEvent, ev));
+                        callbacksForEventType[eventPropertyName].forEach(executeCallback.bind(null, newEvent));
                     }
                 }
 
