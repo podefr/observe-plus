@@ -248,7 +248,6 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                 .slice(originalEvent.index, event.addedCount)
                 .forEach(function (value, index) {
                     if (isValidValueToObserve(value)) {
-                        debugger;
                         var newNamespace = createNamespace(namespace, originalEvent.index + index);
                         new Observe(value, newNamespace, _callbacks, rootObject || observedObject);
                     }
