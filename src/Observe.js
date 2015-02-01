@@ -140,8 +140,8 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
     function publishEvents(events) {
         events.forEach(function (ev) {
             Object.keys(_callbacks).forEach(function (eventType) {
-                if (strategies[eventType]) {
-                    strategies[eventType](eventType, ev);
+                if (strategies.byEventType[eventType]) {
+                    strategies.byEventType[eventType](eventType, ev);
                 } else {
                     strategies.defaut(eventType, ev);
                 }
@@ -151,38 +151,40 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
 
     // When observing a "name" property, the logic is sligthly different than other properties
     var strategies = {
-        name: function (eventType, ev) {
-            var namespacedName;
+        byEventType: {
+            name: function (eventType, ev) {
+                var namespacedName;
 
-            var newEvent = clone(ev);
+                var newEvent = clone(ev);
 
-            newEvent.object = rootObject || observedObject;
+                newEvent.object = rootObject || observedObject;
 
-            if (ev.hasOwnProperty("name")) {
-                namespacedName = createNamespace(namespace, ev.name);
-            } else {
-                namespacedName = createNamespace(namespace, ev.index);
-            }
-
-            loop(_callbacks[eventType], function (callbacks, property) {
-                if (nestedProperty.isIn(rootObject || observedObject, property, newEvent.object)) {
-                    if (newEvent.type === "update" &&
-                        getValueFromPartialPath(property, namespacedName, ev.oldValue) === nestedProperty.get(rootObject || observedObject, property)) {
-                        return;
-                    }
-                    if (newEvent.hasOwnProperty("name")) {
-                        newEvent.name = property;
-                        if (newEvent.type !== "add") {
-                            newEvent.oldValue = getValueFromPartialPath(property, namespacedName, ev.oldValue);
-                        }
-                    } else {
-                        newEvent.index = property;
-
-                    }
-
-                    callbacks.forEach(executeCallback.bind(null, newEvent, ev));
+                if (ev.hasOwnProperty("name")) {
+                    namespacedName = createNamespace(namespace, ev.name);
+                } else {
+                    namespacedName = createNamespace(namespace, ev.index);
                 }
-            });
+
+                loop(_callbacks[eventType], function (callbacks, property) {
+                    if (nestedProperty.isIn(rootObject || observedObject, property, newEvent.object)) {
+                        if (newEvent.type === "update" &&
+                            getValueFromPartialPath(property, namespacedName, ev.oldValue) === nestedProperty.get(rootObject || observedObject, property)) {
+                            return;
+                        }
+                        if (newEvent.hasOwnProperty("name")) {
+                            newEvent.name = property;
+                            if (newEvent.type !== "add") {
+                                newEvent.oldValue = getValueFromPartialPath(property, namespacedName, ev.oldValue);
+                            }
+                        } else {
+                            newEvent.index = property;
+
+                        }
+
+                        callbacks.forEach(executeCallback.bind(null, newEvent, ev));
+                    }
+                });
+            },
         },
         defaut: function (eventType, ev) {
             var newEvent = clone(ev);
