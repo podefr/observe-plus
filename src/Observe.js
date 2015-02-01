@@ -20,8 +20,15 @@ var loop = require("simple-loop"),
 module.exports = function Observe(observedObject, namespace, callbacks, rootObject) {
     var _callbacks = callbacks || {},
         _isPaused = false,
-        _savedEvents = [],
-        _prototype = null;
+        _savedEvents = [];
+
+    // If no observe found, throw an error
+    if (typeof Object.observe != "function" || typeof Array.observe != "function") {
+        throw new Error("Make sure that the harmony options are enabled in this runtime. " +
+            "Run node with the --harmony option or navigate to " +
+            "chrome://flags/#enable-javascript-harmony in Chrome. " +
+            "Check out https://github.com/podefr/observe-plus for more info");
+    }
 
     /**
      * ------------------------------------------------------
@@ -102,7 +109,7 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
      * Stop observing
      */
     this.destroy = function destroy() {
-        _prototype.unobserve(observedObject, treatEvents);
+        (Array.isArray(observedObject ) ? Array : Object).unobserve(observedObject, treatEvents);
     };
 
     /**
@@ -200,23 +207,18 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
      */
 
     // Make sure we only observe Arrays and Objects
-    if (observedObject === null || typeof observedObject != "object") {
+    if (!isValidValueToObserve(observedObject)) {
         throw new TypeError("observe must be called with an Array or an Object");
     }
 
     // Decide which Observe to use, Object.observe or Array.observe
-    _prototype = Array.isArray(observedObject) ? Array : Object;
-
-    // If no observe found, throw an error
-    if (typeof _prototype.observe != "function") {
-        throw new Error("Make sure that the harmony options are enabled in this runtime. " +
-            "Run node with the --harmony option or navigate to " +
-            "chrome://flags/#enable-javascript-harmony in Chrome. " +
-            "Check out https://github.com/podefr/observe-plus for more info");
+    if (Array.isArray(observedObject)) {
+        Array.observe(observedObject, treatEvents);
+        this.addListener("type", "splice", onSplice);
+    } else {
+        Object.observe(observedObject, treatEvents);
+        this.addListener("type", "add", onAdd);
     }
-
-    // Actually observe
-    _prototype.observe(observedObject, treatEvents);
 
     // And now, recursively walk the array/object to watch nested arrays/objects
     loop(observedObject, function (value, key) {
@@ -229,8 +231,7 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
         }
     });
 
-    // Also listen to add events, for when a new object/array is added!
-    this.addListener("type", "add", function (event) {
+    function onAdd(event) {
         var value = event.object[event.name],
             key = event.name,
             newNamespace;
@@ -239,13 +240,12 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
             newNamespace = createNamespace(namespace, key);
             new Observe(value, newNamespace, _callbacks, rootObject || observedObject);
         }
-    });
+    }
 
-    // Same, but if a new item is added to an array
-    this.addListener("type", "splice", function (event, originalEvent) {
-        if (event.addedCount > 0) {
-            event.object
-                .slice(originalEvent.index, event.addedCount)
+    function onSplice(event, originalEvent) {
+        if (originalEvent.addedCount > 0) {
+            originalEvent.object
+                .slice(originalEvent.index, originalEvent.addedCount)
                 .forEach(function (value, index) {
                     if (isValidValueToObserve(value)) {
                         var newNamespace = createNamespace(namespace, originalEvent.index + index);
@@ -253,7 +253,8 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                     }
                 });
         }
-    });
+    }
+
 };
 
 function createNamespace(namespace, key) {
