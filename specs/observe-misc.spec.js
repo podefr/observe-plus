@@ -46,11 +46,78 @@ describe("GIVEN an observed array", function () {
                     done();
                 });
             });
-
         });
+    });
+});
 
+describe("GIVEN a very complex data structure", function () {
+    var dataStructure, observer;
 
-
+    beforeEach(function () {
+        dataStructure = [
+            {
+                arrayProperty: [
+                    ["value1", "value2"],
+                    ["value3", "value4"],
+                    [{ property: ["deeply", "nested", "array"]}]
+                ],
+                objectProperty: {
+                    property1: true,
+                    property2: null,
+                    property3: {
+                        nestedArrayProperty: ["", function () {}, undefined, 0, 147, false, {}]
+                    },
+                    property4: {
+                        deeplyNestedObject: {
+                            anotherArray: [
+                                0, 1, 2, 3
+                            ]
+                        }
+                    }
+                }
+            }
+        ];
+        observer = observe(dataStructure);
     });
 
+    describe("WHEN pushing an item to a deeply nested array", function () {
+        var arr = [], spy;
+        beforeEach(function () {
+            spy = sinon.spy();
+            observer.observe("splice", spy);
+            dataStructure[0].arrayProperty[2][0].property.push(arr);
+        });
+
+        it("THEN publishes a splice event", function (done) {
+            asap(function () {
+                expect(spy.firstCall.args[0]).to.eql({
+                    type: "splice",
+                    object: dataStructure,
+                    index: "0.arrayProperty.2.0.property.3",
+                    removed: [],
+                    addedCount: 1
+                });
+                done();
+            })
+        });
+
+        describe("WHEN adding another! nested array to the newly added one", function () {
+            beforeEach(function () {
+                dataStructure[0].arrayProperty[2][0].property[3].push("very nested!");
+            });
+
+            it("THEN publishes a very nested event", function (done) {
+                asap(function () {
+                    expect(spy.secondCall.args[0]).to.eql({
+                        type: "splice",
+                        object: dataStructure,
+                        index: "0.arrayProperty.2.0.property.3.0",
+                        removed: [],
+                        addedCount: 1
+                    });
+                    done();
+                });
+            });
+        });
+    });
 });

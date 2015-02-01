@@ -184,18 +184,23 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                         callbacks.forEach(executeCallback.bind(null, newEvent, ev));
                     }
                 });
-            },
+            }
         },
         defaut: function (eventType, ev) {
+            var namespacedName;
+
             var newEvent = clone(ev);
             newEvent.object = rootObject || observedObject;
 
             if (newEvent.hasOwnProperty("name")) {
-                newEvent.name = createNamespace(namespace, ev.name);
+                namespacedName = newEvent.name = createNamespace(namespace, ev.name);
             } else {
-                newEvent.index = createNamespace(namespace, ev.index);
+                namespacedName = newEvent.index = createNamespace(namespace, ev.index);
             }
 
+            if (!nestedProperty.isIn(rootObject || observedObject, namespacedName, ev.object)) {
+                return false;
+            }
             if (_callbacks[eventType] && _callbacks[eventType][ev[eventType]]) {
                 _callbacks[eventType][ev[eventType]].forEach(executeCallback.bind(null, newEvent, ev));
             }
@@ -247,7 +252,7 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
     function onSplice(event, originalEvent) {
         if (originalEvent.addedCount > 0) {
             originalEvent.object
-                .slice(originalEvent.index, originalEvent.addedCount)
+                .slice(originalEvent.index, originalEvent.index + originalEvent.addedCount)
                 .forEach(function (value, index) {
                     if (isValidValueToObserve(value)) {
                         var newNamespace = createNamespace(namespace, originalEvent.index + index);
