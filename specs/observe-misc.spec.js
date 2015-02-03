@@ -139,6 +139,28 @@ describe("GIVEN a very complex data structure", function () {
                         done();
                     });
                 });
+
+                describe("WHEN deleting an item", function () {
+                    var deleteSpy;
+
+                    beforeEach(function () {
+                        deleteSpy = sinon.spy();
+                        observer.observe("delete", deleteSpy);
+                        delete dataStructure[0].arrayProperty[2][0].property[3][0];
+                    });
+
+                    it("THEN publishes a delete event", function (done) {
+                        asap(function () {
+                            expect(deleteSpy.firstCall.args[0]).to.eql({
+                                type: "delete",
+                                object: dataStructure,
+                                name: "0.arrayProperty.2.0.property.3.0",
+                                oldValue: "value"
+                            });
+                            done();
+                        });
+                    });
+                });
             });
         });
     });
