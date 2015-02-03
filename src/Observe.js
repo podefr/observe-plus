@@ -153,19 +153,14 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
     var strategies = {
         byEventType: {
             name: function (eventType, ev) {
-                var namespacedName;
-
-                var newEvent = clone(ev);
-
-                newEvent.object = rootObject || observedObject;
-
-                if (ev.hasOwnProperty("name")) {
-                    namespacedName = createNamespace(namespace, ev.name);
-                } else {
-                    namespacedName = createNamespace(namespace, ev.index);
-                }
-
                 loop(_callbacks[eventType], function (callbacks, property) {
+                    var namespacedName = getNamespacedName(ev);
+
+                    var newEvent = clone(ev);
+
+                    newEvent.object = rootObject || observedObject;
+
+
                     if (nestedProperty.isIn(rootObject || observedObject, property, newEvent.object)) {
                         if (newEvent.type === "update" &&
                             getValueFromPartialPath(property, namespacedName, ev.oldValue) === nestedProperty.get(rootObject || observedObject, property)) {
@@ -187,15 +182,16 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
             }
         },
         defaut: function (eventType, ev) {
-            var namespacedName;
+            var namespacedName = getNamespacedName(ev);
 
             var newEvent = clone(ev);
+
             newEvent.object = rootObject || observedObject;
 
             if (newEvent.hasOwnProperty("name")) {
-                namespacedName = newEvent.name = createNamespace(namespace, ev.name);
+                newEvent.name = createNamespace(namespace, ev.name);
             } else {
-                namespacedName = newEvent.index = createNamespace(namespace, ev.index);
+                newEvent.index = createNamespace(namespace, ev.index);
             }
 
             if (!nestedProperty.isIn(rootObject || observedObject, namespacedName, ev.object)) {
@@ -206,6 +202,14 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
             }
         }
     };
+
+    function getNamespacedName(event) {
+        if (event.hasOwnProperty("name")) {
+            return createNamespace(namespace, event.name);
+        } else {
+            return createNamespace(namespace, event.index);
+        }
+    }
 
     /**
      * ------------------------------------------------------

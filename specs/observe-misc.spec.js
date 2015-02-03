@@ -81,16 +81,16 @@ describe("GIVEN a very complex data structure", function () {
     });
 
     describe("WHEN pushing an item to a deeply nested array", function () {
-        var arr = [], spy;
+        var arr = ['value'], spliceSpy;
         beforeEach(function () {
-            spy = sinon.spy();
-            observer.observe("splice", spy);
+            spliceSpy = sinon.spy();
+            observer.observe("splice", spliceSpy);
             dataStructure[0].arrayProperty[2][0].property.push(arr);
         });
 
         it("THEN publishes a splice event", function (done) {
             asap(function () {
-                expect(spy.firstCall.args[0]).to.eql({
+                expect(spliceSpy.firstCall.args[0]).to.eql({
                     type: "splice",
                     object: dataStructure,
                     index: "0.arrayProperty.2.0.property.3",
@@ -108,14 +108,36 @@ describe("GIVEN a very complex data structure", function () {
 
             it("THEN publishes a very nested event", function (done) {
                 asap(function () {
-                    expect(spy.secondCall.args[0]).to.eql({
+                    expect(spliceSpy.secondCall.args[0]).to.eql({
                         type: "splice",
                         object: dataStructure,
-                        index: "0.arrayProperty.2.0.property.3.0",
+                        index: "0.arrayProperty.2.0.property.3.1",
                         removed: [],
                         addedCount: 1
                     });
                     done();
+                });
+            });
+
+            describe("WHEN modifying the nested array", function () {
+                var updateSpy;
+
+                beforeEach(function () {
+                    updateSpy = sinon.spy();
+                    observer.observe("update", updateSpy);
+                    dataStructure[0].arrayProperty[2][0].property[3][1] = "updated very nested!";
+                });
+
+                it("THEN publishes an update event", function (done) {
+                    asap(function () {
+                        expect(updateSpy.firstCall.args[0]).to.eql({
+                            type: "update",
+                            object: dataStructure,
+                            name: "0.arrayProperty.2.0.property.3.1",
+                            oldValue: "very nested!"
+                        });
+                        done();
+                    });
                 });
             });
         });
