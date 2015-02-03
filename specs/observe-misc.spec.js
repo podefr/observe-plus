@@ -165,7 +165,7 @@ describe("GIVEN a very complex data structure", function () {
         });
     });
 
-    describe.only("WHEN replacing parts of the data structure with a new similar one", function () {
+    describe("WHEN replacing parts of the data structure with a new similar one", function () {
         var updateSpy1, updateSpy2;
 
         beforeEach(function () {

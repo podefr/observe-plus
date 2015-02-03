@@ -255,6 +255,24 @@ describe("GIVEN an observed object", function () {
                     });
                 });
             });
+
+            describe("WHEN a parent object is deleted", function () {
+                beforeEach(function () {
+                    delete pojo.newProperty.nested;
+                });
+
+                it("THEN triggers a delete event", function (done) {
+                    asap(function () {
+                        expect(spy.thirdCall.args[0]).to.eql({
+                            type: "delete",
+                            object: pojo,
+                            name: "newProperty.nested.property",
+                            oldValue: false
+                        });
+                        done();
+                    });
+                });
+            });
         });
 
         describe("WHEN the nested property is deleted ", function () {
