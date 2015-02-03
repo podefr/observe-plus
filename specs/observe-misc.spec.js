@@ -164,4 +164,41 @@ describe("GIVEN a very complex data structure", function () {
             });
         });
     });
+
+    describe.only("WHEN replacing parts of the data structure with a new similar one", function () {
+        var updateSpy1, updateSpy2;
+
+        beforeEach(function () {
+            updateSpy1 = sinon.spy();
+            updateSpy2 = sinon.spy();
+            observer.observeValue("0.objectProperty.property4.deeplyNestedObject.anotherArray.1", updateSpy1);
+            observer.observeValue("0.objectProperty.property4.deeplyNestedObject.anotherArray.2", updateSpy2);
+            dataStructure[0].objectProperty.property4 = {
+                deeplyNestedObject: {
+                    anotherArray: [
+                        0, 2, 2, 3
+                    ]
+                }
+            };
+        });
+
+        it("THEN publishes an event for the updated item", function (done) {
+            asap(function () {
+                expect(updateSpy1.firstCall.args[0]).to.eql({
+                    type: "update",
+                    object: dataStructure,
+                    name: "0.objectProperty.property4.deeplyNestedObject.anotherArray.1",
+                    oldValue: 1
+                });
+                done();
+            });
+        });
+
+        it("THEN doesn't publish an event for the non updated item", function (done) {
+            asap(function () {
+                expect(updateSpy2.called).to.be.false;
+                done();
+            });
+        });
+    });
 });

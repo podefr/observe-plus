@@ -160,7 +160,6 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
 
                     newEvent.object = rootObject || observedObject;
 
-
                     if (nestedProperty.isIn(rootObject || observedObject, property, newEvent.object)) {
                         if (newEvent.type === "update" &&
                             getValueFromPartialPath(property, namespacedName, ev.oldValue) === nestedProperty.get(rootObject || observedObject, property)) {
