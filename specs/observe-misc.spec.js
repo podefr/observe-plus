@@ -140,22 +140,24 @@ describe("GIVEN a very complex data structure", function () {
                     });
                 });
 
-                describe("WHEN deleting an item", function () {
-                    var deleteSpy;
+                describe("WHEN splicing out an item", function () {
+                    var spliceSpy;
 
                     beforeEach(function () {
-                        deleteSpy = sinon.spy();
-                        observer.observe("delete", deleteSpy);
-                        delete dataStructure[0].arrayProperty[2][0].property[3][0];
+                        spliceSpy = sinon.spy();
+                        observer.observe("splice", spliceSpy);
+                        dataStructure[0].arrayProperty[2][0].property[3].splice(0, 1);
+
                     });
 
                     it("THEN publishes a delete event", function (done) {
                         asap(function () {
-                            expect(deleteSpy.firstCall.args[0]).to.eql({
-                                type: "delete",
+                            expect(spliceSpy.firstCall.args[0]).to.eql({
+                                type: "splice",
                                 object: dataStructure,
-                                name: "0.arrayProperty.2.0.property.3.0",
-                                oldValue: "value"
+                                index: "0.arrayProperty.2.0.property.3.0",
+                                removed: ["value"],
+                                addedCount: 0
                             });
                             done();
                         });
