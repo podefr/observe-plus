@@ -11,6 +11,8 @@ Observe+ is a library based on [Object.observe/Array.observe](http://wiki.ecmasc
 
 http://addyosmani.com/blog/the-future-of-data-binding-is-object-observe/
 
+Reference: http://arv.github.io/ecmascript-object-observe/
+
 ### Compatible browsers:
 
 Check Kangax' ES compat table to see where Object.observe (ES7) is available : http://kangax.github.io/es5-compat-table/es6/#Object.observe_%28part_of_b_ES7_/b_%29
