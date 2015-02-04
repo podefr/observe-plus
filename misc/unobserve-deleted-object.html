@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test memleaks from removed observed objects</title>
+    <script>
+        var object = {
+            nested: {}
+        };
+        function test() {
+
+
+            Object.observe(object.nested, function () {});
+            Object.unobserve(object.nested, function () {});
+        }
+
+        function run(times) {
+            times = times || 1;
+
+            while (times--) {
+                test();
+            }
+        }
+
+    </script>
+</head>
+<body>
+
+</body>
+</html>
