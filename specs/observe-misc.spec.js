@@ -203,4 +203,14 @@ describe("GIVEN a very complex data structure", function () {
             });
         });
     });
+
+    describe("WHEN removing parts of the structure", function () {
+        beforeEach(function () {
+            dataStructure.length = 0;
+        });
+
+        it("THEN unobserves the removed objects to allow garbage collection", function () {
+            // TODO how to test this?
+        });
+    });
 });

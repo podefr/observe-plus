@@ -263,6 +263,8 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                     }
                 });
         }
+
+
     }
 
 };
