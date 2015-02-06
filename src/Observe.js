@@ -225,10 +225,18 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
     if (Array.isArray(observedObject)) {
         Array.observe(observedObject, treatEvents);
         this.addListener("type", "splice", onSplice);
+//        this.addListener("name", namespace, function (newEvent) {
+//            console.log("newEvent array", namespace, newEvent);
+//        }, this);
     } else {
         Object.observe(observedObject, treatEvents);
         this.addListener("type", "add", onAdd);
+//        this.addListener("name", namespace, function (newEvent) {
+//            console.log("newEvent object", namespace, newEvent);
+//        }, this);
     }
+
+
 
     // And now, recursively walk the array/object to watch nested arrays/objects
     loop(observedObject, function (value, key) {
@@ -253,6 +261,7 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
     }
 
     function onSplice(event, originalEvent) {
+       // console.log("on splice", originalEvent.object, observedObject)
         if (originalEvent.addedCount > 0) {
             originalEvent.object
                 .slice(originalEvent.index, originalEvent.index + originalEvent.addedCount)
@@ -266,7 +275,6 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
 
 
     }
-
 };
 
 function createNamespace(namespace, key) {

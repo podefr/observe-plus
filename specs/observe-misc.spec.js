@@ -163,6 +163,34 @@ describe("GIVEN a very complex data structure", function () {
                         });
                     });
                 });
+
+                describe("WHEN watching a nested object AND a parent one is deleted", function () {
+                    var deleteSpy;
+
+                    beforeEach(function () {
+                        deleteSpy = sinon.spy();
+                        observer.observeValue("0.objectProperty.property4.deeplyNestedObject", deleteSpy);
+                        dataStructure.length = 0;
+                    });
+
+                    it("THEN publishes a delete event", function (done) {
+                        asap(function () {
+                            console.log(deleteSpy.firstCall.args[1]);
+
+                            expect(deleteSpy.firstCall.args[0]).to.eql({
+                                type: "delete",
+                                object: dataStructure,
+                                name: "0.objectProperty.property4.deeplyNestedObject",
+                                oldValue: {
+                                    anotherArray: [
+                                        0, 1, 2, 3
+                                    ]
+                                }
+                            });
+                            done();
+                        });
+                    });
+                });
             });
         });
     });
@@ -204,9 +232,10 @@ describe("GIVEN a very complex data structure", function () {
         });
     });
 
-    describe("WHEN removing parts of the structure", function () {
+    xdescribe("WHEN removing parts of the structure", function () {
         beforeEach(function () {
-            dataStructure.length = 0;
+            //delete dataStructure[0].objectProperty;
+            dataStructure.length = 0;;
         });
 
         it("THEN unobserves the removed objects to allow garbage collection", function () {
