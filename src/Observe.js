@@ -6,8 +6,10 @@
 "use strict";
 
 var asap = require("asap");
-var loop = require("simple-loop"),
-    nestedProperty = require("nested-property");
+var loop = require("simple-loop");
+var nestedProperty = require("nested-property");
+
+var eventFactory = require("./eventFactory");
 
 /**
  * Observe can observe a top level object/array, or a nested object/array within itself
@@ -20,7 +22,8 @@ var loop = require("simple-loop"),
 module.exports = function Observe(observedObject, namespace, callbacks, rootObject) {
     var _callbacks = callbacks || {},
         _isPaused = false,
-        _savedEvents = [];
+        _savedEvents = [],
+        _rootObject = rootObject || observedObject;
 
     // If no observe found, throw an error
     if (typeof Object.observe != "function" || typeof Array.observe != "function") {
@@ -156,48 +159,47 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                 loop(_callbacks[eventType], function (callbacks, property) {
                     var namespacedName = getNamespacedName(ev);
 
-                    var newEvent = clone(ev);
+                    var newEvent = eventFactory.create(ev);
 
-                    newEvent.object = rootObject || observedObject;
+                    newEvent.object = _rootObject;
 
-                    if (nestedProperty.isIn(rootObject || observedObject, property, newEvent.object)) {
-                        if (newEvent.type === "update" &&
-                            getValueFromPartialPath(property, namespacedName, ev.oldValue) === nestedProperty.get(rootObject || observedObject, property)) {
-                            return;
+                    if (newEvent.hasOwnProperty("name")) {
+                        newEvent.name = property;
+                        if (newEvent.type != "add") {
+                            newEvent.oldValue = getValueFromPartialPath(property, namespacedName, ev.oldValue);
                         }
-                        if (newEvent.hasOwnProperty("name")) {
-                            newEvent.name = property;
-                            if (newEvent.type !== "add") {
-                                newEvent.oldValue = getValueFromPartialPath(property, namespacedName, ev.oldValue);
-                            }
-                        } else {
-                            newEvent.index = property;
+                    } else {
+                        newEvent.index = property;
+                    }
 
-                        }
+                    if (newEvent.type == "update" &&
+                        getValueFromPartialPath(property, namespacedName, ev.oldValue) === nestedProperty.get(_rootObject, property)) {
+                        return;
+                    }
 
+                    if (nestedProperty.isIn(_rootObject, property, ev.object)) {
                         callbacks.forEach(executeCallback.bind(null, newEvent, ev));
                     }
                 });
             }
         },
         defaut: function (eventType, ev) {
-            var namespacedName = getNamespacedName(ev);
-
-            var newEvent = clone(ev);
-
-            newEvent.object = rootObject || observedObject;
-
-            if (newEvent.hasOwnProperty("name")) {
-                newEvent.name = createNamespace(namespace, ev.name);
-            } else {
-                newEvent.index = createNamespace(namespace, ev.index);
-            }
-
-            if (!nestedProperty.isIn(rootObject || observedObject, namespacedName, ev.object)) {
-                return false;
-            }
             if (_callbacks[eventType] && _callbacks[eventType][ev[eventType]]) {
-                _callbacks[eventType][ev[eventType]].forEach(executeCallback.bind(null, newEvent, ev));
+                var namespacedName = getNamespacedName(ev);
+
+                var newEvent = eventFactory.create(ev);
+
+                newEvent.object = _rootObject;
+
+                if (newEvent.hasOwnProperty("name")) {
+                    newEvent.name = createNamespace(namespace, ev.name);
+                } else {
+                    newEvent.index = createNamespace(namespace, ev.index);
+                }
+
+                if (nestedProperty.isIn(_rootObject, namespacedName, ev.object)) {
+                    _callbacks[eventType][ev[eventType]].forEach(executeCallback.bind(null, newEvent, ev));
+                }
             }
         }
     };
@@ -286,10 +288,6 @@ function createNamespace(namespace, key) {
 
 function isValidValueToObserve(val) {
     return val !== null && typeof val == "object";
-}
-
-function clone(obj) {
-    return JSON.parse(JSON.stringify(obj));
 }
 
 function subtractPath(path1, path2) {
