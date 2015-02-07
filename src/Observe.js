@@ -157,23 +157,18 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
         byEventType: {
             name: function (eventType, ev) {
                 loop(_callbacks[eventType], function (callbacks, property) {
-                    var namespacedName = getNamespacedName(ev);
+                    var namespacedName = getNamespacedName(ev),
+                        oldValue = getValueFromPartialPath(property, namespacedName, ev.oldValue);
 
-                    var newEvent = eventFactory.create(ev);
-
-                    newEvent.object = _rootObject;
-
-                    if (newEvent.hasOwnProperty("name")) {
-                        newEvent.name = property;
-                        if (newEvent.type != "add") {
-                            newEvent.oldValue = getValueFromPartialPath(property, namespacedName, ev.oldValue);
-                        }
-                    } else {
-                        newEvent.index = property;
-                    }
+                    var newEvent = eventFactory.create(ev, {
+                        eventType: eventType,
+                        rootObject: _rootObject,
+                        oldValue: oldValue,
+                        namespacedName: property
+                    });
 
                     if (newEvent.type == "update" &&
-                        getValueFromPartialPath(property, namespacedName, ev.oldValue) === nestedProperty.get(_rootObject, property)) {
+                        oldValue === nestedProperty.get(_rootObject, property)) {
                         return;
                     }
 
@@ -187,15 +182,11 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
             if (_callbacks[eventType] && _callbacks[eventType][ev[eventType]]) {
                 var namespacedName = getNamespacedName(ev);
 
-                var newEvent = eventFactory.create(ev);
-
-                newEvent.object = _rootObject;
-
-                if (newEvent.hasOwnProperty("name")) {
-                    newEvent.name = createNamespace(namespace, ev.name);
-                } else {
-                    newEvent.index = createNamespace(namespace, ev.index);
-                }
+                var newEvent = eventFactory.create(ev, {
+                    eventType: eventType,
+                    rootObject: _rootObject,
+                    namespacedName: namespacedName
+                });
 
                 if (nestedProperty.isIn(_rootObject, namespacedName, ev.object)) {
                     _callbacks[eventType][ev[eventType]].forEach(executeCallback.bind(null, newEvent, ev));

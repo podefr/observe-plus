@@ -21,7 +21,21 @@ var objectEvent = {
 };
 
 module.exports = {
-    create: function (ev) {
-        return JSON.parse(JSON.stringify(ev));
+    create: function (ev, properties) {
+        var copy = JSON.parse(JSON.stringify(ev));
+
+        copy.object = properties.rootObject;
+
+
+        if ("name" in copy) {
+            copy.name = properties.namespacedName;
+            if (copy.type != "add" && properties.eventType == "name") {
+               copy.oldValue = properties.oldValue;
+            }
+        } else {
+            copy.index = properties.namespacedName;
+        }
+
+        return copy;
     }
 };
