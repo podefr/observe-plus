@@ -5,27 +5,13 @@
  */
 "use strict";
 
-var arrayEvent = {
-    type: "",
-    index: "",
-    object: null,
-    removed: [],
-    addedCount: 0
-};
-
-var objectEvent = {
-    type: "",
-    name: "",
-    object: null,
-    oldValue: undefined
-};
-
 module.exports = {
+    // This stuff works but it's a mess.
+    // At least it's hidden in this file
     create: function (ev, properties) {
         var copy = JSON.parse(JSON.stringify(ev));
 
         copy.object = properties.rootObject;
-
 
         if ("name" in copy) {
             copy.name = properties.namespacedName;
