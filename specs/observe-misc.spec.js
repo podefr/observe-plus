@@ -204,7 +204,7 @@ describe("GIVEN a very complex data structure", function () {
         });
     });
 
-    xdescribe("WHEN removing parts of the structure", function () {
+    describe("WHEN removing parts of the structure", function () {
         beforeEach(function () {
             //delete dataStructure[0].objectProperty;
             dataStructure.length = 0;;

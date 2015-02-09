@@ -218,18 +218,12 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
     if (Array.isArray(observedObject)) {
         Array.observe(observedObject, treatEvents);
         this.addListener("type", "splice", onSplice);
-//        this.addListener("name", namespace, function (newEvent) {
-//            console.log("newEvent array", namespace, newEvent);
-//        }, this);
+        this.addListener("name", namespace, onChange, this);
     } else {
         Object.observe(observedObject, treatEvents);
         this.addListener("type", "add", onAdd);
-//        this.addListener("name", namespace, function (newEvent) {
-//            console.log("newEvent object", namespace, newEvent);
-//        }, this);
+        this.addListener("name", namespace, onChange, this);
     }
-
-
 
     // And now, recursively walk the array/object to watch nested arrays/objects
     loop(observedObject, function (value, key) {
@@ -238,7 +232,7 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
         if (isValidValueToObserve(value)) {
             newNamespace = createNamespace(namespace, key);
 
-            new Observe(value, newNamespace, _callbacks, rootObject || observedObject);
+            new Observe(value, newNamespace, _callbacks, _rootObject);
         }
     });
 
@@ -249,7 +243,7 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
 
         if (isValidValueToObserve(value)) {
             newNamespace = createNamespace(namespace, key);
-            new Observe(value, newNamespace, _callbacks, rootObject || observedObject);
+            new Observe(value, newNamespace, _callbacks, _rootObject);
         }
     }
 
@@ -261,12 +255,14 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                 .forEach(function (value, index) {
                     if (isValidValueToObserve(value)) {
                         var newNamespace = createNamespace(namespace, originalEvent.index + index);
-                        new Observe(value, newNamespace, _callbacks, rootObject || observedObject);
+                        new Observe(value, newNamespace, _callbacks, _rootObject);
                     }
                 });
         }
+    }
 
-
+    function onChange(event) {
+       // if ()
     }
 };
 
