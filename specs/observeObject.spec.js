@@ -419,7 +419,7 @@ describe("GIVEN an observed object", function () {
 
                     it("THEN only publishes the new event", function (done) {
                         asap(function () {
-                            expect(spy.callCount).to.equal(4);
+                            expect(spy.callCount).to.equal(3);
                             done();
                         });
                     });

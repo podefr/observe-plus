@@ -23,7 +23,8 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
     var _callbacks = callbacks || {},
         _isPaused = false,
         _savedEvents = [],
-        _rootObject = rootObject || observedObject;
+        _rootObject = rootObject || observedObject,
+        disposeOnAdd;
 
     // If no observe found, throw an error
     if (typeof Object.observe != "function" || typeof Array.observe != "function") {
@@ -112,7 +113,6 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
      * Stop observing
      */
     this.destroy = function destroy() {
-        console.log('destroying', observedObject)
         (Array.isArray(observedObject ) ? Array : Object).unobserve(observedObject, treatEvents);
     };
 
@@ -215,23 +215,20 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
         throw new TypeError("observe must be called with an Array or an Object");
     }
 
-    var disp2;
-
     // Decide which Observe to use, Object.observe or Array.observe
     if (Array.isArray(observedObject)) {
         Array.observe(observedObject, treatEvents);
-        disp2 = this.addListener("type", "splice", onSplice);
+        disposeOnAdd = this.addListener("type", "splice", onSplice);
     } else {
         Object.observe(observedObject, treatEvents);
-        disp2 = this.addListener("type", "add", onAdd);
+        disposeOnAdd = this.addListener("type", "add", onAdd);
     }
 
-    var dispose = this.addListener("name", namespace, function (event) {
+    var disposeOnDelete = this.addListener("name", namespace, function (event) {
         if (event.type == "delete") {
-            console.log('destroy', namespace)
             this.destroy();
-            dispose();
-            disp2();
+            disposeOnDelete();
+            disposeOnAdd();
         }
     }, this);
 
