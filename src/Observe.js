@@ -24,7 +24,7 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
         _isPaused = false,
         _savedEvents = [],
         _rootObject = rootObject || observedObject,
-        disposeOnAdd;
+        _disposeOnAdd;
 
     // If no observe found, throw an error
     if (typeof Object.observe != "function" || typeof Array.observe != "function") {
@@ -218,17 +218,17 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
     // Decide which Observe to use, Object.observe or Array.observe
     if (Array.isArray(observedObject)) {
         Array.observe(observedObject, treatEvents);
-        disposeOnAdd = this.addListener("type", "splice", onSplice);
+        _disposeOnAdd = this.addListener("type", "splice", onSplice);
     } else {
         Object.observe(observedObject, treatEvents);
-        disposeOnAdd = this.addListener("type", "add", onAdd);
+        _disposeOnAdd = this.addListener("type", "add", onAdd);
     }
 
-    var disposeOnDelete = this.addListener("name", namespace, function (event) {
+    var _disposeOnDelete = this.addListener("name", namespace, function (event) {
         if (event.type == "delete") {
             this.destroy();
-            disposeOnDelete();
-            disposeOnAdd();
+            _disposeOnDelete();
+            _disposeOnAdd();
         }
     }, this);
 
