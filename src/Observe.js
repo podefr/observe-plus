@@ -112,6 +112,7 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
      * Stop observing
      */
     this.destroy = function destroy() {
+        console.log('destroying', observedObject)
         (Array.isArray(observedObject ) ? Array : Object).unobserve(observedObject, treatEvents);
     };
 
@@ -214,16 +215,25 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
         throw new TypeError("observe must be called with an Array or an Object");
     }
 
+    var disp2;
+
     // Decide which Observe to use, Object.observe or Array.observe
     if (Array.isArray(observedObject)) {
         Array.observe(observedObject, treatEvents);
-        this.addListener("type", "splice", onSplice);
-        this.addListener("name", namespace, onChange, this);
+        disp2 = this.addListener("type", "splice", onSplice);
     } else {
         Object.observe(observedObject, treatEvents);
-        this.addListener("type", "add", onAdd);
-        this.addListener("name", namespace, onChange, this);
+        disp2 = this.addListener("type", "add", onAdd);
     }
+
+    var dispose = this.addListener("name", namespace, function (event) {
+        if (event.type == "delete") {
+            console.log('destroy', namespace)
+            this.destroy();
+            dispose();
+            disp2();
+        }
+    }, this);
 
     // And now, recursively walk the array/object to watch nested arrays/objects
     loop(observedObject, function (value, key) {
@@ -231,7 +241,6 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
 
         if (isValidValueToObserve(value)) {
             newNamespace = createNamespace(namespace, key);
-
             new Observe(value, newNamespace, _callbacks, _rootObject);
         }
     });
@@ -248,7 +257,6 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
     }
 
     function onSplice(event, originalEvent) {
-       // console.log("on splice", originalEvent.object, observedObject)
         if (originalEvent.addedCount > 0) {
             originalEvent.object
                 .slice(originalEvent.index, originalEvent.index + originalEvent.addedCount)
@@ -259,10 +267,6 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                     }
                 });
         }
-    }
-
-    function onChange(event) {
-       // if ()
     }
 };
 

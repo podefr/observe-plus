@@ -204,14 +204,19 @@ describe("GIVEN a very complex data structure", function () {
         });
     });
 
-    describe("WHEN removing parts of the structure", function () {
+    describe.only("WHEN removing parts of the structure", function () {
         beforeEach(function () {
-            //delete dataStructure[0].objectProperty;
-            dataStructure.length = 0;;
+            delete dataStructure[0].objectProperty;
+            delete dataStructure[0].arrayProperty;
         });
 
-        it("THEN unobserves the removed objects to allow garbage collection", function () {
-            // TODO how to test this?
+        it("THEN unobserves the removed objects to allow garbage collection", function (done) {
+            asap(function () {
+                console.log("break");
+
+                dataStructure.push("tester");
+                done();
+            });
         });
     });
 });
