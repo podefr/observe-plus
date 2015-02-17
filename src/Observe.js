@@ -56,6 +56,9 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
         _callbacks[propertyName][propertyValue].push(item);
 
         return function dispose() {
+            if (!_callbacks[propertyName][propertyValue]) {
+                return false;
+            }
             var index = _callbacks[propertyName][propertyValue].indexOf(item);
             if (index >= 0) {
                 _callbacks[propertyName][propertyValue].splice(index, 1);
