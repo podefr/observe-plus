@@ -556,7 +556,7 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
 
     if (namespace) {
         var _disposeOnDelete = this.addListener("name", namespace, function (event) {
-            if (event.type == "delete" || (event.type == "splice" && event.addedCount === 0)) {
+            if (isRemoveEvent(event)) {
                 this.destroy();
                 _disposeOnDelete();
                 _disposeOnAdd();
@@ -609,6 +609,13 @@ function createNamespace(namespace, key) {
 
 function isValidValueToObserve(val) {
     return val !== null && typeof val == "object";
+}
+
+function isRemoveEvent(event) {
+    var isDelete = event.type == "delete",
+        isSpliceOut = event.type == "splice" && event.addedCount === 0;
+
+    return isDelete || isSpliceOut;
 }
 
 function subtractPath(path1, path2) {
