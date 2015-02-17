@@ -488,8 +488,15 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
         byEventType: {
             name: function (eventType, ev) {
                 loop(_callbacks[eventType], function (callbacks, property) {
-                    var namespacedName = getNamespacedName(ev),
-                        oldValue = getValueFromPartialPath(property, namespacedName, ev.oldValue);
+                    var namespacedName = getNamespacedName(ev);
+
+                    // If the property we're watching isn't in the namespacedName,
+                    // there's nothing to do
+                    if (!property.startsWith(namespacedName)) {
+                        return;
+                    }
+
+                    var oldValue = getValueFromPartialPath(property, namespacedName, ev.oldValue);
 
                     var newEvent = eventFactory.create(ev, {
                         eventType: eventType,
