@@ -179,6 +179,7 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                         eventType: eventType,
                         rootObject: _rootObject,
                         oldValue: oldValue,
+                        value: nestedProperty.get(_rootObject, property),
                         namespacedName: property
                     });
 

@@ -22,6 +22,10 @@ module.exports = {
             copy.index = properties.namespacedName;
         }
 
+        if ("value" in properties) {
+            copy.value = properties.value;
+        }
+
         return copy;
     }
 };
