@@ -382,6 +382,9 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
         _callbacks[propertyName][propertyValue].push(item);
 
         return function dispose() {
+            if (!_callbacks[propertyName][propertyValue]) {
+                return false;
+            }
             var index = _callbacks[propertyName][propertyValue].indexOf(item);
             if (index >= 0) {
                 _callbacks[propertyName][propertyValue].splice(index, 1);
@@ -502,9 +505,11 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                         eventType: eventType,
                         rootObject: _rootObject,
                         oldValue: oldValue,
+                        value: nestedProperty.get(_rootObject, property),
                         namespacedName: property
                     });
 
+                    // If the property hasn't changed, then we don't publish an event either
                     if (newEvent.type == "update" &&
                         oldValue === nestedProperty.get(_rootObject, property)) {
                         return;
@@ -655,6 +660,10 @@ module.exports = {
             }
         } else {
             copy.index = properties.namespacedName;
+        }
+
+        if ("value" in properties) {
+            copy.value = properties.value;
         }
 
         return copy;
