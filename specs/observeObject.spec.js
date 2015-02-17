@@ -308,8 +308,8 @@ describe("GIVEN an observed object", function () {
                 asap(function () {
                     expect(spy.secondCall.args[0]).to.eql({
                         type: "delete",
-                        object: pojo,
                         name: "newProperty.nested.property",
+                        object: pojo,
                         oldValue: true,
                         value: undefined
                     });
