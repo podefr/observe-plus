@@ -190,7 +190,8 @@ describe("GIVEN a very complex data structure", function () {
                     type: "update",
                     object: dataStructure,
                     name: "0.objectProperty.property4.deeplyNestedObject.anotherArray.1",
-                    oldValue: 1
+                    oldValue: 1,
+                    value: 2
                 });
                 done();
             });

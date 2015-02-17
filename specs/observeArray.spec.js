@@ -135,14 +135,16 @@ describe("GIVEN an observed array", function () {
                     object: ["newValue"],
                     index: "0",
                     removed: [],
-                    addedCount: 1
+                    addedCount: 1,
+                    value: "newValue"
                 });
 
                 expect(spy.lastCall.args[0]).to.eql({
                     type: "update",
-                    name: "0",
                     object: ["newValue"],
-                    oldValue: "value"
+                    name: "0",
+                    oldValue: "value",
+                    value: "newValue"
                 });
                 done();
             });
@@ -169,7 +171,8 @@ describe("GIVEN an observed array", function () {
                     object: array,
                     index: "0.nested.property",
                     removed: [],
-                    addedCount: 1
+                    addedCount: 1,
+                    value: true
                 });
                 done();
             });
@@ -186,7 +189,8 @@ describe("GIVEN an observed array", function () {
                         type: "update",
                         object: array,
                         name: "0.nested.property",
-                        oldValue: true
+                        oldValue: true,
+                        value: false
                     });
                     done();
                 });
@@ -204,7 +208,8 @@ describe("GIVEN an observed array", function () {
                         type: "delete",
                         object: array,
                         name: "0.nested.property",
-                        oldValue: true
+                        oldValue: true,
+                        value: undefined
                     });
                     done();
                 });
@@ -222,7 +227,8 @@ describe("GIVEN an observed array", function () {
                         type: "delete",
                         object: array,
                         name: "0.nested.property",
-                        oldValue: true
+                        oldValue: true,
+                        value: undefined
                     });
                     done();
                 });
@@ -247,7 +253,8 @@ describe("GIVEN an observed array", function () {
                     index: "0",
                     object: ["newValue"],
                     removed: [],
-                    addedCount: 1
+                    addedCount: 1,
+                    value: "newValue"
                 });
                 done();
             });

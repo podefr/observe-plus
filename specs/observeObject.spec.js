@@ -173,7 +173,8 @@ describe("GIVEN an observed object", function () {
                 expect(spy.firstCall.args[0]).to.eql({
                     type: "add",
                     name: "newProperty",
-                    object: pojo
+                    object: pojo,
+                    value: "newValue"
                 });
                 done();
             });
@@ -198,7 +199,8 @@ describe("GIVEN an observed object", function () {
                  expect(spy.firstCall.args[0]).to.eql({
                      type: "add",
                      object: pojo,
-                     name: "newProperty.nested.property"
+                     name: "newProperty.nested.property",
+                     value: true
                  });
                  done();
              });
@@ -215,7 +217,8 @@ describe("GIVEN an observed object", function () {
                         type: "update",
                         object: pojo,
                         name: "newProperty.nested.property",
-                        oldValue: true
+                        oldValue: true,
+                        value: false
                     });
                     done();
                 });
@@ -234,7 +237,8 @@ describe("GIVEN an observed object", function () {
                             type: "update",
                             object: pojo,
                             name: "newProperty.nested.property",
-                            oldValue: true
+                            oldValue: true,
+                            value: false
                         });
                         done();
                     });
@@ -267,7 +271,8 @@ describe("GIVEN an observed object", function () {
                             type: "delete",
                             object: pojo,
                             name: "newProperty.nested.property",
-                            oldValue: false
+                            oldValue: false,
+                            value: undefined
                         });
                         done();
                     });
@@ -286,7 +291,8 @@ describe("GIVEN an observed object", function () {
                         type: "delete",
                         name: "newProperty.nested.property",
                         object: pojo,
-                        oldValue: true
+                        oldValue: true,
+                        value: undefined
                     });
                     done();
                 });
@@ -302,9 +308,10 @@ describe("GIVEN an observed object", function () {
                 asap(function () {
                     expect(spy.secondCall.args[0]).to.eql({
                         type: "delete",
-                        name: "newProperty.nested.property",
                         object: pojo,
-                        oldValue: true
+                        name: "newProperty.nested.property",
+                        oldValue: true,
+                        value: undefined
                     });
                     done();
                 });
@@ -359,7 +366,8 @@ describe("GIVEN an observed object", function () {
                 expect(spy.firstCall.args[0]).to.eql({
                     type: "add",
                     object: pojo,
-                    name: "newProperty"
+                    name: "newProperty",
+                    value: "value"
                 });
                 done();
             });
