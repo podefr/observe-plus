@@ -385,6 +385,9 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
             var index = _callbacks[propertyName][propertyValue].indexOf(item);
             if (index >= 0) {
                 _callbacks[propertyName][propertyValue].splice(index, 1);
+                if (_callbacks[propertyName][propertyValue].length === 0) {
+                    delete _callbacks[propertyName][propertyValue];
+                }
                 return true;
             } else {
                 return false;
@@ -463,6 +466,7 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
         try {
             callback.call(thisObj, newEvent, originalEvent);
         } catch (err) {
+            console.error("error", err);
         }
     }
 
@@ -550,13 +554,16 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
         _disposeOnAdd = this.addListener("type", "add", onAdd);
     }
 
-    var _disposeOnDelete = this.addListener("name", namespace, function (event) {
-        if (event.type == "delete") {
-            this.destroy();
-            _disposeOnDelete();
-            _disposeOnAdd();
-        }
-    }, this);
+    if (namespace) {
+        var _disposeOnDelete = this.addListener("name", namespace, function (event) {
+            if (event.type == "delete" || (event.type == "splice" && event.addedCount === 0)) {
+                this.destroy();
+                _disposeOnDelete();
+                _disposeOnAdd();
+            }
+        }, this);
+    }
+
 
     // And now, recursively walk the array/object to watch nested arrays/objects
     loop(observedObject, function (value, key) {

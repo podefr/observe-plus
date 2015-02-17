@@ -5,10 +5,17 @@
     <title>Test Observe-plus</title>
     <script src="observe-plus.js"></script>
     <script>
+var obj = [], observe;
         window.addEventListener("load", function () {
-            var obj = {};
+            obj.push({}, {}, {});
 
-            var observe = observePlus.observe(obj);
+            observe = observePlus.observe(obj);
+
+            observe.observeValue("0.id", function (event) {
+                console.log("0.id", event);
+            });
+
+            obj[0].id = "0";
         }, true);
     </script>
 </head>
