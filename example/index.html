@@ -5,22 +5,45 @@
     <title>Test Observe-plus</title>
     <script src="observe-plus.js"></script>
     <script>
-var obj = [], observe;
+        var obj, observe;
+
         window.addEventListener("load", function () {
-            obj.push({}, {}, {});
+            obj = JSON.parse('[' + new Array(1000).join(structure + ',') + ' 0 ]');
 
             observe = observePlus.observe(obj);
 
-            observe.observeValue("0.id", function (event) {
-                console.log("0.id", event);
+            observe.observeValue("1000.stuff.morestuff.0", function (event) {
+                console.log(event);
             });
 
-            obj[0].id = "0";
+            obj.push(JSON.parse(structure));
 
-            obj.length = 0;
-
-            obj[0] = { id: "newId"};
+            setTimeout(function () {
+                //obj.pop();
+                obj.length = 0;
+            }, 1000)
         }, true);
+
+        var structure = JSON.stringify({
+            property: "super property",
+            niceArray: [
+                'item1',
+                'item2',
+                'item3'
+            ],
+            stuff: {
+                morestuff: [
+                    'stuff1',
+                    'stuff2',
+                    'stuff3'
+                ],
+                otherstuff: {
+                    'stuff1': 'yes',
+                    'stuff2': 'no',
+                    'stuff3': 'maybe'
+                }
+            }
+        });
     </script>
 </head>
 <body>
