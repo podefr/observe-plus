@@ -230,7 +230,7 @@ Note that resume() will also trigger the callbacks asynchronously, to be consist
 
 ## Changelog
 
-## 3.0.0 - WIP
+## 3.0.0 - Alpha - 17 FEB 2015
 
 * Can observe nested objects and arrays
 * Add current value of the watched property to the event object

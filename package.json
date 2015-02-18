@@ -1,7 +1,7 @@
 {
   "name": "observe-plus",
   "description": "Extra features for ES7's Object.observe",
-  "version": "2.1.0",
+  "version": "3.0.0-alpha",
   "homepage": "http://podefr.github.com/observe-plus/",
   "licenses": [
     {
