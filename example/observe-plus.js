@@ -1,26 +1,4 @@
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.observePlus=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/../src/observe-plus.js":[function(require,module,exports){
-/**
- * observe-plus.js - https://github.com/podefr/observe-plus
- * Copyright(c) 2014-2015 Olivier Scherrer <pode.fr@gmail.com>
- * MIT Licensed
- */
-"use strict";
-
-var Observe = require("./Observe");
-
-module.exports = {
-    observe: function observe(observedObject, namespace) {
-        var _observe = new Observe(observedObject, namespace);
-
-        _observe.observeValue = _observe.addListener.bind(_observe, "name");
-        _observe.observeValueOnce = _observe.addListenerOnce.bind(_observe, "name");
-        _observe.observe = _observe.addListener.bind(_observe, "type");
-        _observe.observeOnce = _observe.addListenerOnce.bind(_observe, "type");
-
-        return _observe;
-    }
-};
-},{"./Observe":4}],1:[function(require,module,exports){
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.observePlus=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function (process){
 
 // Use the fastest possible means to execute a task in a future turn
@@ -137,7 +115,7 @@ module.exports = asap;
 
 
 }).call(this,require('_process'))
-},{"_process":8}],2:[function(require,module,exports){
+},{"_process":9}],2:[function(require,module,exports){
 /**
 * @license nested-property https://github.com/cosmosio/nested-property
 *
@@ -286,7 +264,7 @@ function isInNestedProperty(object, property, objectInPath, options) {
     }
 }
 
-},{"assert":6}],3:[function(require,module,exports){
+},{"assert":7}],3:[function(require,module,exports){
 /**
 * @license simple-loop https://github.com/flams/simple-loop
 *
@@ -323,7 +301,7 @@ module.exports = function loop(iterated, callback, scope) {
   }
 };
 
-},{"assert":6}],4:[function(require,module,exports){
+},{"assert":7}],4:[function(require,module,exports){
 /**
  * observe-plus.js - https://github.com/podefr/observe-plus
  * Copyright(c) 2014-2015 Olivier Scherrer <pode.fr@gmail.com>
@@ -670,6 +648,28 @@ module.exports = {
     }
 };
 },{}],6:[function(require,module,exports){
+/**
+ * observe-plus.js - https://github.com/podefr/observe-plus
+ * Copyright(c) 2014-2015 Olivier Scherrer <pode.fr@gmail.com>
+ * MIT Licensed
+ */
+"use strict";
+
+var Observe = require("./Observe");
+
+module.exports = {
+    observe: function observe(observedObject, namespace) {
+        var _observe = new Observe(observedObject, namespace);
+
+        _observe.observeValue = _observe.addListener.bind(_observe, "name");
+        _observe.observeValueOnce = _observe.addListenerOnce.bind(_observe, "name");
+        _observe.observe = _observe.addListener.bind(_observe, "type");
+        _observe.observeOnce = _observe.addListenerOnce.bind(_observe, "type");
+
+        return _observe;
+    }
+};
+},{"./Observe":4}],7:[function(require,module,exports){
 // http://wiki.commonjs.org/wiki/Unit_Testing/1.0
 //
 // THIS IS NOT TESTED NOR LIKELY TO WORK OUTSIDE V8!
@@ -1030,7 +1030,7 @@ var objectKeys = Object.keys || function (obj) {
   return keys;
 };
 
-},{"util/":10}],7:[function(require,module,exports){
+},{"util/":11}],8:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -1055,7 +1055,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -1114,14 +1114,14 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -1711,5 +1711,5 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":9,"_process":8,"inherits":7}]},{},[])("/../src/observe-plus.js")
+},{"./support/isBuffer":10,"_process":9,"inherits":8}]},{},[6])(6)
 });
