@@ -174,18 +174,18 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                     }
 
                     var oldValue = getValueFromPartialPath(property, namespacedName, ev.oldValue);
+                    var newValue = nestedProperty.get(_rootObject, property);
 
                     var newEvent = eventFactory.create(ev, {
                         eventType: eventType,
                         rootObject: _rootObject,
                         oldValue: oldValue,
-                        value: nestedProperty.get(_rootObject, property),
+                        value: newValue,
                         namespacedName: property
                     });
 
                     // If the property hasn't changed, then we don't publish an event either
-                    if (newEvent.type == "update" &&
-                        oldValue === nestedProperty.get(_rootObject, property)) {
+                    if (newEvent.type == "update" && oldValue === newValue) {
                         return;
                     }
 
