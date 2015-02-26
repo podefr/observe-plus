@@ -248,6 +248,54 @@ Stop observing changes:
 observer.unobserve();
 ```
 
+### Observing nested properties!
+
+Observe+ can also watch for generic events or events on specific items/properties from nested objects and arrays!
+
+Given this data structure:
+
+```js
+var dataStructure = [
+    {
+        id: 0,
+        name: "Alice",
+        colors: ["red", "green"]
+    },
+
+    {
+        id: 1,
+        name: "Bob",
+        colors: ["yellow", "pink"]
+    },
+    
+    {
+        id: 2,
+        name: "Carol",
+        colors: ["purple"]
+    }
+];
+```
+
+I can watch this dataStructure:
+
+```js
+var observer = object.observe(dataStructure);
+```
+
+then I can watch if Alice's preferred color changes:
+
+```js
+observer.observeValue("0.colors.0", function (event) {
+    // do something when 0.colors.0 changes.
+    // event.value will hold the new color
+    // event.oldValue will hold the old color
+});
+
+
+// Will trigger the event
+dataStructure[0].colors[0] = "blue";
+```
+
 ### Pause/resume:
 
 The events are fired asynchronously, on the next turn of the event loop. This should allow for rendering to be delayed until all computation is done. If you still want to delay the trigger further, you can pause the observer and resume it later, by using the pause/resume API:
