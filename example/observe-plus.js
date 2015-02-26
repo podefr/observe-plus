@@ -471,14 +471,13 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                 loop(_callbacks[eventType], function (callbacks, property) {
                     var namespacedName = getNamespacedName(ev);
 
-                    // If the property we're watching isn't in the namespacedName,
-                    // there's nothing to do
-                    if (!property.startsWith(namespacedName)) {
-                        return;
-                    }
-
                     var oldValue = getValueFromPartialPath(property, namespacedName, ev.oldValue);
                     var newValue = nestedProperty.get(_rootObject, property);
+
+                    // If the property hasn't changed, then we don't publish an event either
+                    if (ev.type == "update" && oldValue === newValue) {
+                        return;
+                    }
 
                     var newEvent = eventFactory.create(ev, {
                         eventType: eventType,
@@ -487,11 +486,6 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                         value: newValue,
                         namespacedName: property
                     });
-
-                    // If the property hasn't changed, then we don't publish an event either
-                    if (newEvent.type == "update" && oldValue === newValue) {
-                        return;
-                    }
 
                     if (nestedProperty.isIn(_rootObject, property, ev.object)) {
                         callbacks.forEach(executeCallback.bind(null, newEvent, ev));
@@ -628,7 +622,10 @@ module.exports = {
     // This stuff works but it's a mess.
     // At least it's hidden in this file
     create: function (ev, properties) {
-        var copy = JSON.parse(JSON.stringify(ev));
+        var copy = Object.keys(ev).reduce(function (cp, prop) {
+            cp[prop] = ev[prop];
+            return cp;
+        }, {});
 
         copy.object = properties.rootObject;
 
