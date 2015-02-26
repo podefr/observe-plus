@@ -1,4 +1,4 @@
-# Observe+
+# Observe+ (Now observes on nested objects/arrays!)
 
 Observe+ is a library based on [Object.observe/Array.observe](http://wiki.ecmascript.org/doku.php?id=harmony:observe) that adds the following features:
 
