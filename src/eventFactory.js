@@ -5,11 +5,18 @@
  */
 "use strict";
 
+function shallowCopy(object) {
+    return Object.keys(object).reduce(function (copy, property) {
+        copy[property] = object[property];
+        return copy;
+    }, {});
+}
+
 module.exports = {
     // This stuff works but it's a mess.
     // At least it's hidden in this file
     create: function (ev, properties) {
-        var copy = JSON.parse(JSON.stringify(ev));
+        var copy = shallowCopy(ev);
 
         copy.object = properties.rootObject;
 
