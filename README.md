@@ -92,6 +92,7 @@ var dispose = observer.observe("add", function (publishedEvent) {
 	publishedEvent.name == "newProperty";
 	publishedEvent.object === plainObject;
 	publishedEvent.type == "add";
+	publishedEvent.value == "value";
 }, scope /* optional */);
 
 // This will trigger the listeners that have subscribed to "add"
@@ -131,6 +132,7 @@ var dispose = observer.observeValue("newProperty", function (publishedEvent) {
 	publishedEvent.name === "newProperty";
 	publishedEvent.object === plainObject;
 	publishedEvent.type === "add";
+	publishedEvent.value === "value";
 }, scope /* optional */);
 
 // Or similar, but the listener will be called only once:
@@ -235,9 +237,9 @@ dispose();
 Trick: if you use Object.observe on the array, you can also listen to "length" changes as it's a property of the object
 
 ```js
-var observer = observePlus.observeObject(plainArray);
+var observer = observePlus.observe(plainArray);
 
-observer.observe("length", function (publishedEvent) { ... }, scope /* optional */);
+observer.observeValue("length", function (publishedEvent) { ... }, scope /* optional */);
 ```
 
 Stop observing changes:
