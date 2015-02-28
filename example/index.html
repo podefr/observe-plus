@@ -8,11 +8,15 @@
         var obj, observe;
 
         window.addEventListener("load", function () {
-            obj = JSON.parse('[' + new Array(1000).join(structure + ',') + ' 0 ]');
+            obj = JSON.parse('[' + new Array(10).join(structure + ',') + ' 0 ]');
 
             observe = observePlus.observe(obj);
 
-            observe.observeValue("1000.stuff.morestuff.0", function (event) {
+            observe.observeValue("5.stuff.morestuff.0", function (event) {
+                console.log(event);
+            });
+
+            observe.observeValue("10.stuff.morestuff.0", function (event) {
                 console.log(event);
             });
 
