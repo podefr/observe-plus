@@ -270,10 +270,9 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
         if (originalEvent.addedCount > 0) {
             originalEvent.object
                 .slice(originalEvent.index, originalEvent.index + originalEvent.addedCount)
-                .forEach(function (value, index) {
+                .forEach(function (value) {
                     if (isValidValueToObserve(value)) {
-                        var newNamespace = createNamespace(namespace, originalEvent.index + index);
-                        new Observe(value, newNamespace, _callbacks, _rootObject);
+                        new Observe(value, event.index, _callbacks, _rootObject);
                     }
                 });
         }

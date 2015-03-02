@@ -474,7 +474,7 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                     var oldValue = getValueFromPartialPath(property, namespacedName, ev.oldValue);
                     var newValue = nestedProperty.get(_rootObject, property);
 
-                    // If the property hasn't changed, then we don't publish an event either
+                    // If the property hasn't changed, then we don't publish an event
                     if (ev.type == "update" && oldValue === newValue) {
                         return;
                     }
@@ -576,8 +576,7 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                 .slice(originalEvent.index, originalEvent.index + originalEvent.addedCount)
                 .forEach(function (value, index) {
                     if (isValidValueToObserve(value)) {
-                        var newNamespace = createNamespace(namespace, originalEvent.index + index);
-                        new Observe(value, newNamespace, _callbacks, _rootObject);
+                        new Observe(value, event.index, _callbacks, _rootObject);
                     }
                 });
         }
@@ -618,14 +617,18 @@ function getValueFromPartialPath(fullPath, partialPath, object) {
  */
 "use strict";
 
+function shallowCopy(object) {
+    return Object.keys(object).reduce(function (copy, property) {
+        copy[property] = object[property];
+        return copy;
+    }, {});
+}
+
 module.exports = {
     // This stuff works but it's a mess.
     // At least it's hidden in this file
     create: function (ev, properties) {
-        var copy = Object.keys(ev).reduce(function (cp, prop) {
-            cp[prop] = ev[prop];
-            return cp;
-        }, {});
+        var copy = shallowCopy(ev);
 
         copy.object = properties.rootObject;
 
