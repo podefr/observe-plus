@@ -14,7 +14,8 @@
     "LICENSE"
   ],
   "dependencies": {
-    "asap": "~1.0.0"
+    "asap": "~1.0.0",
+    "nested-property": "0.0.6"
   },
   "author": "Olivier Scherrer <pode.fr@gmail.com>",
   "devDependencies": {
