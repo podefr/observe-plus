@@ -12,15 +12,9 @@
 
             observe = observePlus.observe(obj);
 
-            observe.observeValue("5.stuff.morestuff.0", function (event) {
-                console.log(event);
-            });
-
             observe.observeValue("10.stuff.morestuff.0", function (event) {
                 console.log(event);
             });
-
-            obj.push(JSON.parse(structure));
         }, true);
 
         var structure = JSON.stringify({
