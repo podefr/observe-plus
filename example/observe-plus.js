@@ -437,7 +437,6 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
         if (_isPaused) {
             _savedEvents = _savedEvents.concat(events);
         } else {
-            observedObject, namespace, _rootObject;
             publishEvents(events);
         }
     }
@@ -488,7 +487,7 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                         namespacedName: property
                     });
 
-                    if (nestedProperty.isIn(_rootObject, property, ev.object)) {
+                    if (nestedProperty.isIn(_rootObject, property, ev.object, {validPath: true })) {
                         callbacks.forEach(executeCallback.bind(null, newEvent, ev));
                     }
                 });
