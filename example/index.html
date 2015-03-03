@@ -15,6 +15,19 @@
             observe.observeValue("10.stuff.morestuff.0", function (event) {
                 console.log(event);
             });
+
+            // should trigger
+            obj.push(JSON.parse(structure));
+
+            // shouldn't trigger
+            obj.push(JSON.parse(structure));
+
+            // should trigger
+            obj[10].stuff.morestuff[0] = "newStuff";
+
+            // shouldn't trigger
+            obj[10].stuff.morestuff.push("otherStuff");
+
         }, true);
 
         var structure = JSON.stringify({
