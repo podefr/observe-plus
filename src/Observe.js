@@ -253,7 +253,7 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
             if (isRemoveEvent(event)) {
                 this.destroy();
                 _disposeOnDelete();
-                _disposeOnAdd();
+                _disposeOnAdd && _disposeOnAdd();
             }
         }, this);
     }
