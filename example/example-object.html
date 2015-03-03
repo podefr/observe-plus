@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Observe-plus</title>
+    <script>
+        var obj, observe;
+
+        window.addEventListener("load", function () {
+            obj = {
+                property: {
+                    nestedProperty: {
+                        veryNestedArray: [{
+                            property1: true,
+                            property2: true
+                        }]
+                    }
+                },
+                otherProperty: {
+                    alsoNestedProperty: {
+                        deeplyNestedProperty: true
+                    }
+                }
+            };
+
+            observe = observePlus.observe(obj);
+
+            observe.observeValue("otherProperty.alsoNestedProperty", function (event) {
+                console.log(event);
+            });
+
+            //should trigger
+            obj.otherProperty.alsoNestedProperty.newDeeplyNestedProperty = false;
+
+            setTimeout(function () {
+                // should trigger
+                delete obj.otherProperty.alsoNestedProperty;
+            }, 0);
+
+            // shouldn't
+            obj.property.nestedProperty2 = {};
+
+        }, true);
+    </script>
+</head>
+<body>
+
+</body>
+<script src="observe-plus.js"></script>
+
+</html>
