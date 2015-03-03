@@ -16,18 +16,22 @@
                 console.log(event);
             });
 
-            // should trigger
+            //should trigger
             obj.push(JSON.parse(structure));
 
             // shouldn't trigger
             obj.push(JSON.parse(structure));
 
-            // should trigger
-            obj[10].stuff.morestuff[0] = "newStuff";
+            // If this change happens in the same event loop as adding the object
+            // when observePlus will publish the add event, the value of obj[10].stuff.morestuff[0]
+            // will already by newStuff, so no new event will be triggered
+            setTimeout(function () {
+                // should trigger
+                obj[10].stuff.morestuff[0] = "newStuff";
 
-            // shouldn't trigger
-            obj[10].stuff.morestuff.push("otherStuff");
-
+                // shouldn't trigger
+                obj[10].stuff.morestuff.push("otherStuff");
+            }, 0);
         }, true);
 
         var structure = JSON.stringify({
