@@ -11,6 +11,8 @@ var nestedProperty = require("nested-property");
 
 var eventFactory = require("./eventFactory");
 
+var observedObjects = new WeakMap();
+
 /**
  * Observe can observe a top level object/array, or a nested object/array within itself
  * @param observedObject the object/array being observed, can be top, or a nested one
@@ -175,6 +177,12 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                         return;
                     }
 
+                    if (ev.type == "splice" &&
+                        // This case isn't filtered out by isIn so we have to do it ourselves
+                        !property.startsWith("" + ev.index)) {
+                        return;
+                    }
+
                     var newEvent = eventFactory.create(ev, {
                         eventType: eventType,
                         rootObject: _rootObject,
@@ -228,11 +236,17 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
     // Decide which Observe to use, Object.observe or Array.observe
     if (Array.isArray(observedObject)) {
         Array.observe(observedObject, treatEvents);
-        _disposeOnAdd = this.addListener("type", "splice", onSplice);
+        if (!observedObjects.has(_rootObject)) {
+            _disposeOnAdd = this.addListener("type", "splice", onSplice);
+        }
     } else {
         Object.observe(observedObject, treatEvents);
-        _disposeOnAdd = this.addListener("type", "add", onAdd);
+        if (!observedObjects.has(_rootObject)) {
+            _disposeOnAdd = this.addListener("type", "add", onAdd);
+        }
     }
+
+    observedObjects.set(_rootObject);
 
     if (namespace) {
         var _disposeOnDelete = this.addListener("name", namespace, function (event) {
