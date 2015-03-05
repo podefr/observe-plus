@@ -481,9 +481,9 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                         return;
                     }
 
-                    if (ev.type == "splice" &&
+                    if ((ev.type == "splice" || ev.type == "delete") &&
                         // This case isn't filtered out by isIn so we have to do it ourselves
-                        !property.startsWith("" + ev.index)) {
+                        !property.startsWith("" + namespacedName)) {
                         return;
                     }
 
@@ -496,7 +496,9 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                     });
 
                     if (nestedProperty.isIn(_rootObject, property, ev.object)) {
-                        callbacks.forEach(executeCallback.bind(null, newEvent, ev));
+                        callbacks.slice(0).forEach(function (callbackArray) {
+                            executeCallback(newEvent, ev, callbackArray);
+                        });
                     }
                 });
             }
@@ -512,7 +514,9 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                 });
 
                 if (nestedProperty.isIn(_rootObject, namespacedName, ev.object)) {
-                    _callbacks[eventType][ev[eventType]].forEach(executeCallback.bind(null, newEvent, ev));
+                    _callbacks[eventType][ev[eventType]].slice(0).forEach(function (callbackArray) {
+                        executeCallback(newEvent, ev, callbackArray);
+                    });
                 }
             }
         }
