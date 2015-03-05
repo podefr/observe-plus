@@ -192,9 +192,7 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                     });
 
                     if (nestedProperty.isIn(_rootObject, property, ev.object)) {
-                        callbacks.slice(0).forEach(function (callbackArray) {
-                            executeCallback(newEvent, ev, callbackArray);
-                        });
+                        callbacks.slice(0).forEach(executeCallback.bind(null, newEvent, ev));
                     }
                 });
             }
@@ -210,9 +208,7 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                 });
 
                 if (nestedProperty.isIn(_rootObject, namespacedName, ev.object)) {
-                    _callbacks[eventType][ev[eventType]].slice(0).forEach(function (callbackArray) {
-                        executeCallback(newEvent, ev, callbackArray);
-                    });
+                    _callbacks[eventType][ev[eventType]].slice(0).forEach(executeCallback.bind(null, newEvent, ev));
                 }
             }
         }
