@@ -35,6 +35,11 @@
             setTimeout(function () {
                 // should trigger
                 delete obj.otherProperty.alsoNestedProperty;
+
+                setTimeout(function () {
+                    // should trigger again
+                    obj.otherProperty.alsoNestedProperty = {};
+                }, 0);
             }, 0);
 
             // shouldn't
