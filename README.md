@@ -314,13 +314,18 @@ Note that resume() will also trigger the callbacks asynchronously, to be consist
 
 ## Changelog
 
-## 3.0.0 - Beta - 25 FEB 2015
+## 3.0.1 - Beta - 05 MAR 2015
+
+* Fix various bugs when modifying parent of observed nested objects that would prevent
+some events being properly published
+
+### 3.0.0 - Beta - 25 FEB 2015
 
 * Fix a bug preventing splice events from triggering
 * Fix performance issue when triggering events for many event listeners
 * Update documentation
 
-## 3.0.0 - Alpha - 17 FEB 2015
+### 3.0.0 - Alpha - 17 FEB 2015
 
 * Can observe nested objects and arrays
 * Add current value of the watched property to the event object
@@ -328,13 +333,13 @@ Note that resume() will also trigger the callbacks asynchronously, to be consist
 * Using destroy terminology instead of unobserve
 * Add isPaused method
 
-## 2.1.0 - 28 DEC 2014
+### 2.1.0 - 28 DEC 2014
 
 * Added .observe that either uses observeArray or observeObject depending on the type of the model to watch
 * [Breaking Change] observeIndex(Once) and observeProperty(Once) are renamed to observeValue(Once).
 * [Breaking Change] Removed bower support and standalone versions of observe-plus for the browser.
 
-## 2.0 - 28 DEC 2014
+### 2.0 - 28 DEC 2014
 
 Beta versions
 
