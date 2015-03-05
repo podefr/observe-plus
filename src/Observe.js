@@ -316,5 +316,9 @@ function subtractPath(path1, path2) {
 }
 
 function getValueFromPartialPath(fullPath, partialPath, object) {
-    return nestedProperty.get(object, subtractPath(fullPath, partialPath));
+    if (fullPath == partialPath) {
+        return object;
+    } else {
+        return nestedProperty.get(object, subtractPath(fullPath, partialPath));
+    }
 }
