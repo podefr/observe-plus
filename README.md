@@ -314,6 +314,10 @@ Note that resume() will also trigger the callbacks asynchronously, to be consist
 
 ## Changelog
 
+## 3.0.2 - Beta - 05 MAR 2015
+
+* Fix bug where oldValue was incorrectly resolved to undefined
+
 ## 3.0.1 - Beta - 05 MAR 2015
 
 * Fix various bugs when modifying parent of observed nested objects that would prevent
