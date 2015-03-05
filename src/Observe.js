@@ -177,9 +177,9 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                         return;
                     }
 
-                    if (ev.type == "splice" &&
+                    if ((ev.type == "splice" || ev.type == "delete") &&
                         // This case isn't filtered out by isIn so we have to do it ourselves
-                        !property.startsWith("" + ev.index)) {
+                        !property.startsWith("" + namespacedName)) {
                         return;
                     }
 
