@@ -26,7 +26,7 @@ module.exports = {
             copy.index = properties.namespacedName;
         }
 
-        if (copy.type != "add" || (copy.type == "splice" && copy.addedCount > 0)) {
+        if (copy.type != "add" && (copy.type != "splice" || copy.addedCount === 0)) {
             copy.oldValue = properties.oldValue;
         }
 
