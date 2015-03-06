@@ -170,6 +170,8 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                     var namespacedName = getNamespacedName(ev);
 
                     var oldValue = getValueFromPartialPath(property, namespacedName, ev.oldValue);
+
+
                     var newValue = nestedProperty.get(_rootObject, property);
 
                     // If the property hasn't changed, then we don't publish an event
@@ -177,10 +179,20 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
                         return;
                     }
 
-                    if ((ev.type == "splice" || ev.type == "delete") &&
+                    if (((ev.type == "splice" && ev.addedCount > 0) || ev.type == "delete") &&
                         // This case isn't filtered out by isIn so we have to do it ourselves
                         !property.startsWith("" + namespacedName)) {
                         return;
+                    }
+
+                    if (ev.type == "splice" && ev.removed.length > 0 &&
+                        !nestedProperty.has(ev.removed, subtractPath(namespace, property))) {
+                        return;
+                    }
+
+                    if (ev.type == "splice" && ev.removed.length > 0 &&
+                        nestedProperty.has(ev.removed, subtractPath(namespace, property))) {
+                        oldValue = nestedProperty.get(ev.removed, subtractPath(namespace, property));
                     }
 
                     var newEvent = eventFactory.create(ev, {
@@ -312,7 +324,11 @@ function isRemoveEvent(event) {
 }
 
 function subtractPath(path1, path2) {
-    return path1.split(path2 + ".").join("");
+    if (path1) {
+        return path1.split(path2 + ".").join("");
+    } else {
+        return path2;
+    }
 }
 
 function getValueFromPartialPath(fullPath, partialPath, object) {

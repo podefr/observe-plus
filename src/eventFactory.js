@@ -22,11 +22,12 @@ module.exports = {
 
         if ("name" in copy) {
             copy.name = properties.namespacedName;
-            if (copy.type != "add" && properties.eventType == "name") {
-               copy.oldValue = properties.oldValue;
-            }
         } else {
             copy.index = properties.namespacedName;
+        }
+
+        if (copy.type != "add" || (copy.type == "splice" && copy.addedCount > 0)) {
+            copy.oldValue = properties.oldValue;
         }
 
         if ("value" in properties) {
