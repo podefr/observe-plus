@@ -57,7 +57,8 @@ describe("GIVEN Observe", function () {
                             type: "add",
                             object: observedObject,
                             name: "newProperty",
-                            value: "value"
+                            value: "value",
+                            oldValue: undefined
                         });
                         done();
                     });
@@ -149,7 +150,8 @@ describe("GIVEN Observe", function () {
                             type: "add",
                             object: observedObject,
                             name: "newProperty",
-                            value: "value"
+                            value: "value",
+                            oldValue: undefined
                         });
                         done();
                     });

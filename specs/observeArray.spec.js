@@ -136,7 +136,8 @@ describe("GIVEN an observed array", function () {
                     index: "0",
                     removed: [],
                     addedCount: 1,
-                    value: "newValue"
+                    value: "newValue",
+                    oldValue: undefined
                 });
 
                 expect(spy.lastCall.args[0]).to.eql({
@@ -172,7 +173,8 @@ describe("GIVEN an observed array", function () {
                     index: "0.nested.property",
                     removed: [],
                     addedCount: 1,
-                    value: true
+                    value: true,
+                    oldValue: undefined
                 });
                 done();
             });
@@ -254,7 +256,8 @@ describe("GIVEN an observed array", function () {
                     object: ["newValue"],
                     removed: [],
                     addedCount: 1,
-                    value: "newValue"
+                    value: "newValue",
+                    oldValue: undefined
                 });
                 done();
             });

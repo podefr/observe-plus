@@ -174,7 +174,8 @@ describe("GIVEN an observed object", function () {
                     type: "add",
                     name: "newProperty",
                     object: pojo,
-                    value: "newValue"
+                    value: "newValue",
+                    oldValue: undefined
                 });
                 done();
             });
@@ -200,7 +201,8 @@ describe("GIVEN an observed object", function () {
                      type: "add",
                      object: pojo,
                      name: "newProperty.nested.property",
-                     value: true
+                     value: true,
+                     oldValue: undefined
                  });
                  done();
              });
@@ -367,7 +369,8 @@ describe("GIVEN an observed object", function () {
                     type: "add",
                     object: pojo,
                     name: "newProperty",
-                    value: "value"
+                    value: "value",
+                    oldValue: undefined
                 });
                 done();
             });
