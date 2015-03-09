@@ -314,7 +314,11 @@ Note that resume() will also trigger the callbacks asynchronously, to be consist
 
 ## Changelog
 
-## 3.0.2 - Beta - 05 MAR 2015
+## 3.0.3 - Beta - 08 MAR 2015
+
+* All events have an oldValue property
+
+### 3.0.2 - Beta - 05 MAR 2015
 
 * Fix bug where oldValue was incorrectly resolved to undefined
 
