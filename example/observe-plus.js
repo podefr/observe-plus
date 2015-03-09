@@ -672,7 +672,7 @@ module.exports = {
             copy.index = properties.namespacedName;
         }
 
-        if (copy.type != "add") {
+        if ("oldValue" in properties) {
             copy.oldValue = properties.oldValue;
         }
 

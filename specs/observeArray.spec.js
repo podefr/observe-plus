@@ -235,6 +235,79 @@ describe("GIVEN an observed array", function () {
                     done();
                 });
             });
+
+            describe("WHEN the nested property is added back", function () {
+                beforeEach(function () {
+                    array[0] = {
+                        nested: {
+                            property: "newValue"
+                        }
+                    };
+                });
+
+                it("THEN publishes an update event", function (done) {
+                    asap(function () {
+                        expect(spy.lastCall.args[0]).to.eql({
+                            type: "update",
+                            object: array,
+                            name: "0.nested.property",
+                            value: "newValue",
+                            oldValue: undefined
+                        });
+                        done();
+                    });
+                });
+            });
+        });
+
+        describe("WHEN emptying the root array", function () {
+            beforeEach(function () {
+                array.length = 0;
+            });
+
+            it("THEN publishes a spice event", function (done) {
+                asap(function () {
+                    expect(spy.lastCall.args[0]).to.eql({
+                        type: "splice",
+                        object: array,
+                        index: "0.nested.property",
+                        removed: [{
+                            "nested": {
+                                "property": true
+                            }
+                        }],
+                        addedCount: 0,
+                        value: undefined,
+                        oldValue: true
+                    });
+                    done();
+                });
+            });
+
+            describe("WHEN the nested property is added back", function () {
+                beforeEach(function () {
+                    array[0] = {
+                        nested: {
+                            property: "newValue"
+                        }
+                    };
+                });
+
+                it("THEN publishes an update event", function (done) {
+                    asap(function () {
+                        expect(spy.lastCall.args[0]).to.eql({
+                            type: "splice",
+                            object: array,
+                            index: "0.nested.property",
+                            removed: [],
+                            addedCount: 1,
+                            value: "newValue",
+                            oldValue: undefined
+                        });
+                        done();
+                    });
+                });
+            });
         });
     });
 
