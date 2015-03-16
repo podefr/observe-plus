@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Observe-plus</title>
+    <script>
+        var obj, observe;
+
+        window.addEventListener("load", function () {
+            obj = {};
+
+            observe = observePlus.observe(obj);
+
+            observe.observe("add", function () {
+                console.log(arguments);
+            });
+            observe.observe("update", function () {
+                console.log(arguments);
+            });
+
+            // In the same turn of the event loop, creating a new object to watch changes upon...
+            obj.level1 = {
+                level2: {
+                    name: "test"
+                }
+            };
+
+            // ... and modifying it
+            obj.level1.level2.name = "update test";
+
+            // will only trigger one event, but it should reflect the most recent state of the object:
+
+            // event : {
+            //    name: "level1",
+            //    object: {
+            //        level2: {
+            //            name: "update test"
+            //        }
+            //    },
+            //    type: "add"
+            // }
+
+        }, true);
+    </script>
+</head>
+<body>
+
+</body>
+<script src="observe-plus.js"></script>
+
+</html>
