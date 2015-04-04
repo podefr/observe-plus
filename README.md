@@ -314,7 +314,11 @@ Note that resume() will also trigger the callbacks asynchronously, to be consist
 
 ## Changelog
 
-## 3.0.3 - Beta - 08 MAR 2015
+## 3.0.4 - Beta - 04 APR 2015
+
+* Tests are using setImmediate instead of asap, which fixes the failing tests with the latest node.js
+
+### 3.0.3 - Beta - 08 MAR 2015
 
 * All events have an oldValue property
 
