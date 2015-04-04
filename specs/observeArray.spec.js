@@ -8,7 +8,6 @@
 
 var chai = require("chai");
 var expect = chai.expect;
-var asap = require("asap");
 var sinon = require("sinon");
 
 var observeArray = require("../src/observe-plus").observe;
@@ -31,7 +30,7 @@ describe("GIVEN an observed array", function () {
         });
 
         it("THEN shouldn't publish any event before a new item is added", function (done) {
-            asap(function () {
+            setImmediate(function () {
                 expect(spy.called).to.be.false;
                 done();
             });
@@ -43,7 +42,7 @@ describe("GIVEN an observed array", function () {
             });
 
             it("THEN should publish a splice event", function (done) {
-                asap(function () {
+                setImmediate(function () {
                     expect(spy.lastCall.args[0]).to.eql({
                         type: 'splice',
                         object: ['newItem'],
@@ -56,7 +55,7 @@ describe("GIVEN an observed array", function () {
             });
 
             it("THEN published only one event", function (done) {
-                asap(function () {
+                setImmediate(function () {
                     expect(spy.callCount).to.equal(1);
                     done();
                 });
@@ -70,7 +69,7 @@ describe("GIVEN an observed array", function () {
                 });
 
                 it("THEN doesn't publish events anymore", function (done) {
-                    asap(function () {
+                    setImmediate(function () {
                         expect(spy.callCount).to.equal(1);
                         done();
                     });
@@ -84,7 +83,7 @@ describe("GIVEN an observed array", function () {
                 });
 
                 it("THEN calls the observer with the updated event", function (done) {
-                    asap(function () {
+                    setImmediate(function () {
                         expect(spy.lastCall.args[0]).to.eql({
                             type: "update",
                             object: ["updatedItem"],
@@ -103,7 +102,7 @@ describe("GIVEN an observed array", function () {
                 });
 
                 it("THEN calls the observer with the splice event", function (done) {
-                    asap(function () {
+                    setImmediate(function () {
                         expect(spy.lastCall.args[0]).to.eql({
                             type: "splice",
                             object: [],
@@ -129,7 +128,7 @@ describe("GIVEN an observed array", function () {
         });
 
         it("THEN publishes an event with the new value and a new event with the old value", function (done) {
-            asap(function () {
+            setImmediate(function () {
                 expect(spy.firstCall.args[0]).to.eql({
                     type: "splice",
                     object: ["newValue"],
@@ -166,7 +165,7 @@ describe("GIVEN an observed array", function () {
         });
 
         it("THEN publishes an event with the new value", function (done) {
-            asap(function () {
+            setImmediate(function () {
                 expect(spy.firstCall.args[0]).to.eql({
                     type: "splice",
                     object: array,
@@ -186,7 +185,7 @@ describe("GIVEN an observed array", function () {
             });
 
             it("THEN publishes an event with the new value", function (done) {
-                asap(function () {
+                setImmediate(function () {
                     expect(spy.secondCall.args[0]).to.eql({
                         type: "update",
                         object: array,
@@ -205,7 +204,7 @@ describe("GIVEN an observed array", function () {
             });
 
             it("THEN publishes a delete event", function (done) {
-                asap(function () {
+                setImmediate(function () {
                     expect(spy.secondCall.args[0]).to.eql({
                         type: "delete",
                         object: array,
@@ -224,7 +223,7 @@ describe("GIVEN an observed array", function () {
             });
 
             it("THEN publishes a delete event", function (done) {
-                asap(function () {
+                setImmediate(function () {
                     expect(spy.secondCall.args[0]).to.eql({
                         type: "delete",
                         object: array,
@@ -246,7 +245,7 @@ describe("GIVEN an observed array", function () {
                 });
 
                 it("THEN publishes an update event", function (done) {
-                    asap(function () {
+                    setImmediate(function () {
                         expect(spy.lastCall.args[0]).to.eql({
                             type: "update",
                             object: array,
@@ -266,7 +265,7 @@ describe("GIVEN an observed array", function () {
             });
 
             it("THEN publishes a spice event", function (done) {
-                asap(function () {
+                setImmediate(function () {
                     expect(spy.lastCall.args[0]).to.eql({
                         type: "splice",
                         object: array,
@@ -294,7 +293,7 @@ describe("GIVEN an observed array", function () {
                 });
 
                 it("THEN publishes an update event", function (done) {
-                    asap(function () {
+                    setImmediate(function () {
                         expect(spy.lastCall.args[0]).to.eql({
                             type: "splice",
                             object: array,
@@ -322,7 +321,7 @@ describe("GIVEN an observed array", function () {
         });
 
         it("THEN the observer is called", function (done) {
-            asap(function () {
+            setImmediate(function () {
                 expect(spy.firstCall.args[0]).to.eql({
                     type: "splice",
                     index: "0",
@@ -337,7 +336,7 @@ describe("GIVEN an observed array", function () {
         });
 
         it("THEN is disposed of", function (done) {
-            asap(function () {
+            setImmediate(function () {
                 expect(dispose()).to.be.false;
                 done();
             });
@@ -361,7 +360,7 @@ describe("GIVEN an observed array", function () {
             });
 
             it("THEN the observers aren't called", function (done) {
-                asap(function () {
+                setImmediate(function () {
                     expect(spy.called).to.be.false;
                     done();
                 });
@@ -373,7 +372,7 @@ describe("GIVEN an observed array", function () {
                 });
 
                 it("THEN calls all the observers in order", function (done) {
-                    asap(function () {
+                    setImmediate(function () {
                         expect(spy.firstCall.args[0].addedCount).to.equal(1);
                         expect(spy.secondCall.args[0].removed.length).to.equal(1);
                         done();
@@ -389,7 +388,7 @@ describe("GIVEN an observed array", function () {
                     });
 
                     it("THEN only publishes the new event", function (done) {
-                        asap(function () {
+                        setImmediate(function () {
                             expect(spy.callCount).to.equal(1);
                             done();
                         });
@@ -423,7 +422,7 @@ describe("GIVEN an array with a nested array ", function () {
             });
 
             it("THEN publishes an event", function (done) {
-                asap(function () {
+                setImmediate(function () {
                     expect(spy.firstCall.args[0]).to.eql({
                         type: 'splice',
                         object: array,
@@ -452,7 +451,7 @@ describe("GIVEN an array with a nested array ", function () {
             });
 
             it("THEN publishes an event", function (done) {
-                asap(function () {
+                setImmediate(function () {
                     expect(spy.firstCall.args[0]).to.eql({
                         type: 'update',
                         object: array,
@@ -480,7 +479,7 @@ describe("GIVEN an array with a nested array ", function () {
             });
 
             it("THEN publishes an event", function (done) {
-                asap(function () {
+                setImmediate(function () {
                     expect(spy.firstCall.args[0]).to.eql({
                         type: 'update',
                         object: array,

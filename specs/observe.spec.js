@@ -8,7 +8,6 @@
 
 var chai = require("chai");
 var expect = chai.expect;
-var asap = require("asap");
 var sinon = require("sinon");
 
 var Observe = require("../src/Observe");
@@ -50,7 +49,7 @@ describe("GIVEN Observe", function () {
                 });
 
                 it("THEN calls the callback", function (done) {
-                    asap(function () {
+                    setImmediate(function () {
                         expect(callback.calledOnce).to.be.true;
 
                         expect(callback.lastCall.args[0]).to.eql({
@@ -75,7 +74,7 @@ describe("GIVEN Observe", function () {
                         });
 
                         it("THEN doesn't call the callback anymore", function (done) {
-                            asap(function () {
+                            setImmediate(function () {
                                 expect(callback.calledTwice).to.be.false;
                                 done();
                             });
@@ -101,7 +100,7 @@ describe("GIVEN Observe", function () {
                     });
 
                     it("THEN doesn't publish any event", function (done) {
-                        asap(function () {
+                        setImmediate(function () {
                             expect(callback.calledThrice).to.be.false;
                             done();
                         });
@@ -113,14 +112,14 @@ describe("GIVEN Observe", function () {
                         });
 
                         it("THEN tells that the publishing isn't paused", function (done) {
-                            asap(function () {
+                            setImmediate(function () {
                                 expect(observe.isPaused()).to.equal(false);
                                 done();
                             });
                         });
 
                         it("THEN publishes all the events", function (done) {
-                            asap(function () {
+                            setImmediate(function () {
                                 expect(callback.calledThrice).to.be.true;
                                 done();
                             });
@@ -144,7 +143,7 @@ describe("GIVEN Observe", function () {
                 });
 
                 it("THEN calls the callback", function (done) {
-                    asap(function () {
+                    setImmediate(function () {
                         expect(callback.calledOnce).to.be.true;
                         expect(callback.lastCall.args[0]).to.eql({
                             type: "add",
@@ -163,7 +162,7 @@ describe("GIVEN Observe", function () {
                     });
 
                     it("THEN doesn't call the callback", function (done) {
-                        asap(function () {
+                        setImmediate(function () {
                             expect(callback.calledTwice).to.be.false;
                             done();
                         });
@@ -182,7 +181,7 @@ describe("GIVEN Observe", function () {
                     });
 
                     it("THEN doesn't call the callback anymore", function (done) {
-                        asap(function () {
+                        setImmediate(function () {
                             expect(callback.calledOnce).to.be.false;
                             done();
                         });
@@ -205,7 +204,7 @@ describe("GIVEN Observe", function () {
         });
 
         it("THEN publishes a splice event", function (done) {
-            asap(function () {
+            setImmediate(function () {
                 expect(callback.calledOnce).to.be.true;
                 expect(callback.lastCall.args[0]).to.eql({
                     type: "splice",
@@ -226,7 +225,7 @@ describe("GIVEN Observe", function () {
             });
 
             it("THEN doesn't publish events anymore", function (done) {
-                asap(function () {
+                setImmediate(function () {
                     expect(callback.calledTwice).to.be.false;
                     done();
                 });

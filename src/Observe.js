@@ -162,7 +162,7 @@ module.exports = function Observe(observedObject, namespace, callbacks, rootObje
         });
     }
 
-    // When observing a "name" property, the logic is sligthly different than other properties
+    // When observing a "name" property, the logic is slightly different than other properties
     var strategies = {
         byEventType: {
             name: function (eventType, ev) {

@@ -8,7 +8,6 @@
 
 var chai = require("chai");
 var expect = chai.expect;
-var asap = require("asap");
 var sinon = require("sinon");
 
 var observeObject = require("../src/observe-plus").observe;
@@ -30,7 +29,7 @@ describe("GIVEN an observed object", function () {
         });
 
         it("THEN shouldn't publish any event before a new property is added", function (done) {
-            asap(function () {
+            setImmediate(function () {
                 expect(spy.callCount).to.equal(0);
                 done();
             });
@@ -42,7 +41,7 @@ describe("GIVEN an observed object", function () {
             });
 
             it("THEN should publish a new event", function (done) {
-                asap(function () {
+                setImmediate(function () {
                     expect(spy.firstCall.args[0]).to.eql({
                         type: "add",
                         name: "newProperty",
@@ -53,7 +52,7 @@ describe("GIVEN an observed object", function () {
             });
 
             it("THEN only published one event", function (done) {
-                asap(function () {
+                setImmediate(function () {
                     expect(spy.callCount).to.equal(1);
                     done();
                 });
@@ -67,7 +66,7 @@ describe("GIVEN an observed object", function () {
                 });
 
                 it("THEN doesn't publish events anymore", function (done) {
-                    asap(function () {
+                    setImmediate(function () {
                         expect(spy.callCount).to.equal(1);
                         done();
                     });
@@ -81,7 +80,7 @@ describe("GIVEN an observed object", function () {
                 });
 
                 it("THEN calls the observer with the updated event", function (done) {
-                    asap(function () {
+                    setImmediate(function () {
                         expect(spy.secondCall.args[0]).to.eql({
                             type: "update",
                             name: "newProperty",
@@ -100,7 +99,7 @@ describe("GIVEN an observed object", function () {
                 });
 
                 it("THEN calls the observer with undefined and the old value", function (done) {
-                    asap(function () {
+                    setImmediate(function () {
                         expect(spy.secondCall.args[0]).to.eql({
                             type: "delete",
                             name: "newProperty",
@@ -133,7 +132,7 @@ describe("GIVEN an observed object", function () {
                     });
 
                     it("THEN doesn't call the disposed observer anymore", function (done) {
-                        asap(function () {
+                        setImmediate(function () {
                             expect(spy.callCount).to.equal(1);
 
                             done();
@@ -169,7 +168,7 @@ describe("GIVEN an observed object", function () {
         });
 
         it("THEN publishes an event with the new value and the old value", function (done) {
-            asap(function () {
+            setImmediate(function () {
                 expect(spy.firstCall.args[0]).to.eql({
                     type: "add",
                     name: "newProperty",
@@ -196,7 +195,7 @@ describe("GIVEN an observed object", function () {
         });
 
         it("Then publishes an event", function (done) {
-             asap(function () {
+             setImmediate(function () {
                  expect(spy.firstCall.args[0]).to.eql({
                      type: "add",
                      object: pojo,
@@ -214,7 +213,7 @@ describe("GIVEN an observed object", function () {
             });
 
             it("THEN publishes an update event", function (done) {
-                asap(function () {
+                setImmediate(function () {
                     expect(spy.secondCall.args[0]).to.eql({
                         type: "update",
                         object: pojo,
@@ -234,7 +233,7 @@ describe("GIVEN an observed object", function () {
                 });
 
                 it("THEN triggers a new event", function (done) {
-                    asap(function () {
+                    setImmediate(function () {
                         expect(spy.secondCall.args[0]).to.eql({
                             type: "update",
                             object: pojo,
@@ -255,7 +254,7 @@ describe("GIVEN an observed object", function () {
                 });
 
                 it("THEN doesn't trigger an event", function (done) {
-                    asap(function () {
+                    setImmediate(function () {
                         expect(spy.callCount).to.equal(2);
                         done();
                     });
@@ -268,7 +267,7 @@ describe("GIVEN an observed object", function () {
                 });
 
                 it("THEN triggers a delete event", function (done) {
-                    asap(function () {
+                    setImmediate(function () {
                         expect(spy.thirdCall.args[0]).to.eql({
                             type: "delete",
                             object: pojo,
@@ -288,7 +287,7 @@ describe("GIVEN an observed object", function () {
             });
 
             it("THEN publishes a delete event", function (done) {
-                asap(function () {
+                setImmediate(function () {
                     expect(spy.secondCall.args[0]).to.eql({
                         type: "delete",
                         name: "newProperty.nested.property",
@@ -307,7 +306,7 @@ describe("GIVEN an observed object", function () {
             });
 
             it("THEN publishes a delete event", function (done) {
-                asap(function () {
+                setImmediate(function () {
                     expect(spy.secondCall.args[0]).to.eql({
                         type: "delete",
                         name: "newProperty.nested.property",
@@ -335,7 +334,7 @@ describe("GIVEN an observed object", function () {
             });
 
             it("THEN calls the observer", function (done) {
-                asap(function () {
+                setImmediate(function () {
                     expect(spy.firstCall.args[0]).to.eql({
                         type: "add",
                         name: "newProperty",
@@ -346,7 +345,7 @@ describe("GIVEN an observed object", function () {
             });
 
             it("THEN is disposed of", function (done) {
-                asap(function () {
+                setImmediate(function () {
                     expect(dispose()).to.be.false;
                     done();
                 });
@@ -364,7 +363,7 @@ describe("GIVEN an observed object", function () {
         });
 
         it("THEN calls the observer", function (done) {
-            asap(function () {
+            setImmediate(function () {
                 expect(spy.firstCall.args[0]).to.eql({
                     type: "add",
                     object: pojo,
@@ -377,7 +376,7 @@ describe("GIVEN an observed object", function () {
         });
 
         it("THEN is disposed of", function (done) {
-            asap(function () {
+            setImmediate(function () {
                 expect(dispose()).to.be.false;
                 done();
             });
@@ -401,7 +400,7 @@ describe("GIVEN an observed object", function () {
             });
 
             it("THEN the observers aren't called", function (done) {
-                asap(function () {
+                setImmediate(function () {
                     expect(spy.callCount).to.equal(0);
                     done();
                 });
@@ -413,7 +412,7 @@ describe("GIVEN an observed object", function () {
                 });
 
                 it("THEN calls all the observers in order", function (done) {
-                    asap(function () {
+                    setImmediate(function () {
                         expect(spy.firstCall.args[0].type).to.equal("add");
                         expect(spy.secondCall.args[0].type).to.equal("update");
                         expect(spy.thirdCall.args[0].type).to.equal("delete");
@@ -429,7 +428,7 @@ describe("GIVEN an observed object", function () {
                     });
 
                     it("THEN only publishes the new event", function (done) {
-                        asap(function () {
+                        setImmediate(function () {
                             expect(spy.callCount).to.equal(4);
                             done();
                         });

@@ -8,7 +8,6 @@
 
 var chai = require("chai");
 var expect = chai.expect;
-var asap = require("asap");
 var sinon = require("sinon");
 
 var observe = require("../src/observe-plus").observe;
@@ -35,7 +34,7 @@ describe("GIVEN an observed array", function () {
             });
 
             it("THEN triggers an event", function (done) {
-                asap(function () {
+                setImmediate(function () {
                     expect(spy.firstCall.args[0]).to.eql({
                         type: "splice",
                         object: array,
@@ -89,7 +88,7 @@ describe("GIVEN a very complex data structure", function () {
         });
 
         it("THEN publishes a splice event", function (done) {
-            asap(function () {
+            setImmediate(function () {
                 expect(spliceSpy.firstCall.args[0]).to.eql({
                     type: "splice",
                     object: dataStructure,
@@ -107,7 +106,7 @@ describe("GIVEN a very complex data structure", function () {
             });
 
             it("THEN publishes a very nested event", function (done) {
-                asap(function () {
+                setImmediate(function () {
                     expect(spliceSpy.secondCall.args[0]).to.eql({
                         type: "splice",
                         object: dataStructure,
@@ -129,7 +128,7 @@ describe("GIVEN a very complex data structure", function () {
                 });
 
                 it("THEN publishes an update event", function (done) {
-                    asap(function () {
+                    setImmediate(function () {
                         expect(updateSpy.firstCall.args[0]).to.eql({
                             type: "update",
                             object: dataStructure,
@@ -151,7 +150,7 @@ describe("GIVEN a very complex data structure", function () {
                     });
 
                     it("THEN publishes a delete event", function (done) {
-                        asap(function () {
+                        setImmediate(function () {
                             expect(spliceSpy.firstCall.args[0]).to.eql({
                                 type: "splice",
                                 object: dataStructure,
@@ -185,7 +184,7 @@ describe("GIVEN a very complex data structure", function () {
         });
 
         it("THEN publishes an event for the updated item", function (done) {
-            asap(function () {
+            setImmediate(function () {
                 expect(updateSpy1.firstCall.args[0]).to.eql({
                     type: "update",
                     object: dataStructure,
@@ -198,7 +197,7 @@ describe("GIVEN a very complex data structure", function () {
         });
 
         it("THEN doesn't publish an event for the non updated item", function (done) {
-            asap(function () {
+            setImmediate(function () {
                 expect(updateSpy2.called).to.be.false;
                 done();
             });
@@ -211,7 +210,7 @@ describe("GIVEN a very complex data structure", function () {
         });
 
         it("THEN unobserves the removed objects to allow garbage collection", function (done) {
-            asap(function () {
+            setImmediate(function () {
                 dataStructure.pop();
                 done();
             });

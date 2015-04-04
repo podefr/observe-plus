@@ -14,13 +14,13 @@
     "LICENSE"
   ],
   "dependencies": {
-    "asap": "~1.0.0",
+    "asap": "^2.0.1",
     "nested-property": "0.0.6"
   },
   "author": "Olivier Scherrer <pode.fr@gmail.com>",
   "devDependencies": {
     "chai": "~1.10.0",
-    "sinon": "~1.8.1"
+    "sinon": "^1.14.1"
   },
   "keywords": [
     "ES7",
